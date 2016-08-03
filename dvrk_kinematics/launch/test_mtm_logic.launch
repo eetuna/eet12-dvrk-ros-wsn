@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <launch>
 
   <group ns="/dvrk_mtm">
@@ -11,7 +12,7 @@
     </node>
     
     <!-- mtm rviz  -->
-    <include file="$(find dvrk_model)/launch/mtm_right_rviz.launch"/>
+    <include file="$(find dvrk_model2)/launch/mtm_right_rviz.launch"/>
   </group>
 
 </launch>

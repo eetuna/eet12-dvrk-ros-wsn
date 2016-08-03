@@ -26,14 +26,14 @@
       <visual>
         <origin rpy="0 0 0" xyz="0 0 0"/>
         <geometry>
-          <mesh filename="package://dvrk_model/meshes/ecm/Endo_Arm.STL"/>
+          <mesh filename="package://dvrk_model2/meshes/ecm/Endo_Arm.STL"/>
         </geometry>
 	<material name="DaVinciRed"/>
       </visual>
       <collision>
         <origin rpy="0 0 0" xyz="0 0 0"/>
         <geometry>
-          <mesh filename="package://dvrk_model/meshes/ecm/Endo_Arm.STL"/>
+          <mesh filename="package://dvrk_model2/meshes/ecm/Endo_Arm.STL"/>
         </geometry>
       </collision>
     </link>
@@ -62,7 +62,7 @@
       <visual>
         <origin rpy="0 0 -${PI/2}" xyz="0.0 0 0.603"/>
         <geometry>
-          <mesh filename="package://dvrk_model/meshes/ecm/Endo_Link_5.STL"/>
+          <mesh filename="package://dvrk_model2/meshes/ecm/Endo_Link_5.STL"/>
         </geometry>
 	<material name="DaVinciGreen"/>
       </visual>
@@ -70,7 +70,7 @@
         <origin rpy="0 0 -${PI/2}" xyz="0.0 0 0.603"/>
         <geometry>
 
-          <mesh filename="package://dvrk_model/meshes/ecm/Endo_Link_5.STL"/>
+          <mesh filename="package://dvrk_model2/meshes/ecm/Endo_Link_5.STL"/>
         </geometry>
       </collision>
     </link>
@@ -99,14 +99,14 @@
       <visual>
         <origin rpy="${PI} 0 ${PI*78.5/180}" xyz="0.0 0 0.0"/>
         <geometry>
-          <mesh filename="package://dvrk_model/meshes/ecm/Endo_Link_5_2.STL"/>
+          <mesh filename="package://dvrk_model2/meshes/ecm/Endo_Link_5_2.STL"/>
         </geometry>
 	<material name="DaVinciMedGray"/>
       </visual>
       <collision>
         <origin rpy="${PI} 0 ${PI*78.5/180}" xyz="0.0 0 0.0"/>
         <geometry>
-          <mesh filename="package://dvrk_model/meshes/ecm/Endo_Link_5_2.STL"/>
+          <mesh filename="package://dvrk_model2/meshes/ecm/Endo_Link_5_2.STL"/>
         </geometry>
       </collision>
       <inertial>
@@ -128,14 +128,14 @@
       <visual>
         <origin rpy="0 0 0" xyz="0.0 0 -0.0225"/>
         <geometry>
-          <mesh filename="package://dvrk_model/meshes/ecm/Endo_Link_6_2.STL"/>
+          <mesh filename="package://dvrk_model2/meshes/ecm/Endo_Link_6_2.STL"/>
         </geometry>
 	<material name="DaVinciMedGray"/>
       </visual>
       <collision>
         <origin rpy="0 0 0" xyz="0.0 0 -0.0225"/>
         <geometry>
-          <mesh filename="package://dvrk_model/meshes/ecm/Endo_Link_6_2.STL"/>
+          <mesh filename="package://dvrk_model2/meshes/ecm/Endo_Link_6_2.STL"/>
         </geometry>
       </collision>
       <inertial>
@@ -157,14 +157,14 @@
       <visual>
         <origin rpy="0 0 -${PI/2}" xyz="0.0 0 0.025"/>
         <geometry>
-          <mesh filename="package://dvrk_model/meshes/ecm/Endo_Link_7.STL"/>
+          <mesh filename="package://dvrk_model2/meshes/ecm/Endo_Link_7.STL"/>
         </geometry>
 	<material name="DaVinciMedGray"/>
       </visual>
       <collision>
         <origin rpy="0 0 -${PI/2}" xyz="0.0 0 0.025"/>
         <geometry>
-          <mesh filename="package://dvrk_model/meshes/ecm/Endo_Link_7.STL"/>
+          <mesh filename="package://dvrk_model2/meshes/ecm/Endo_Link_7.STL"/>
         </geometry>
       </collision>
       <inertial>
@@ -187,14 +187,14 @@
       <visual>
         <origin rpy="0 0 -${PI/2}" xyz="0.0 0 -0.015"/>
         <geometry>
-          <mesh filename="package://dvrk_model/meshes/ecm/Endo_Link_8.STL"/>
+          <mesh filename="package://dvrk_model2/meshes/ecm/Endo_Link_8.STL"/>
         </geometry>
 	<material name="DaVinciBlue"/>
       </visual>
       <collision>
         <origin rpy="0 0 -${PI/2}" xyz="0.0 0 -0.015"/>
         <geometry>
-          <mesh filename="package://dvrk_model/meshes/ecm/Endo_Link_8.STL"/>
+          <mesh filename="package://dvrk_model2/meshes/ecm/Endo_Link_8.STL"/>
         </geometry>
       </collision>
     </link>
@@ -213,14 +213,14 @@
       <visual>
         <origin rpy="0 0 ${PI/2}" xyz="0.0 0 -0.3979"/>
         <geometry>
-          <mesh filename="package://dvrk_model/meshes/ecm/EndoScope.STL"/>
+          <mesh filename="package://dvrk_model2/meshes/ecm/EndoScope.STL"/>
         </geometry>
 	<material name="DaVinciBlue"/>
       </visual>
       <collision>
         <origin rpy="0 0 ${PI/2}" xyz="0.0 0 -0.3979"/>
         <geometry>
-          <mesh filename="package://dvrk_model/meshes/ecm/EndoScope.STL"/>
+          <mesh filename="package://dvrk_model2/meshes/ecm/EndoScope.STL"/>
         </geometry>
       </collision>
     </link>

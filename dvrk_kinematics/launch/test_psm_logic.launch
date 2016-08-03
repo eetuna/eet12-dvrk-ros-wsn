@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <launch>
 
   <!-- <group ns="/dvrk_psm"> -->
@@ -17,7 +18,7 @@
       <param name="robot_name" value="$(arg robot_name)"/>
     </node>
     
-    <include file="$(find dvrk_model)/launch/psm_one_rviz.launch"/>
+    <include file="$(find dvrk_model2)/launch/psm_one_rviz.launch"/>
   </group>
 
 </launch>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <launch>
 
   <!-- dvrk_teleop gui node -->
@@ -26,7 +27,7 @@
   </node>
   
   <!-- mtm rviz  -->
-  <include file="$(find dvrk_model)/launch/mtm_psm_rviz.launch"/>
+  <include file="$(find dvrk_model2)/launch/mtm_psm_rviz.launch"/>
 
 </launch>
 
