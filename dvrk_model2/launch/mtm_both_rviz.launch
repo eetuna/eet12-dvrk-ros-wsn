@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!-- one mtmr + one psm1  -->
 
 <launch>
@@ -5,7 +6,7 @@
   <arg name="rate" default="20" />
   
   <group ns="/dvrk_mtmr">
-    <arg name="model" default="$(find dvrk_model)/model/mtm_right.urdf.xacro" />
+    <arg name="model" default="$(find dvrk_model2)/model/mtm_right.urdf.xacro" />
 
     <param name="robot_description"
            command="rosrun xacro xacro.py $(arg model)"/>
@@ -22,7 +23,7 @@
   </group>
   
   <group ns="/dvrk_mtml">
-    <arg name="model" default="$(find dvrk_model)/model/mtm_left.urdf.xacro" />
+    <arg name="model" default="$(find dvrk_model2)/model/mtm_left.urdf.xacro" />
     
     <param name="robot_description"
            command="rosrun xacro xacro.py $(arg model)"/>
@@ -40,7 +41,7 @@
 
   
   <node name="rviz" pkg="rviz" type="rviz"
-    args="-d $(find dvrk_model)/rviz_config/both_mtms.rviz" />
+    args="-d $(find dvrk_model2)/rviz_config/both_mtms.rviz" />
   
 </launch>
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <robot name="mtm" xmlns:xacro="http://www.ros.org/wiki/xacro">
   <!-- Colors -->
-  <xacro:include filename="$(find dvrk_model)/model/common.urdf.xacro"/>
+  <xacro:include filename="$(find dvrk_model2)/model/common.urdf.xacro"/>
 
   <!-- Macro for the da Vinci Master Console -->
   <xacro:macro name="master_console" params="prefix parent_link xyz rpy">

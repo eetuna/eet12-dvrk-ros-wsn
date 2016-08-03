@@ -2,7 +2,7 @@
 <robot name="ecm" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
   <!-- Macros -->
-  <xacro:include filename="$(find dvrk_model)/model/ecm.urdf.xacro"/>
+  <xacro:include filename="$(find dvrk_model2)/model/ecm.urdf.xacro"/>
 
   <link name="world"/>
   <xacro:ecm

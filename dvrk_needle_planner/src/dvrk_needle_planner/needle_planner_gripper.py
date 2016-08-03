@@ -176,6 +176,8 @@ class needle_planner:
 		self.affine_needle_frame_wrt_camera_ = Frame()
 		self.affine_gripper_frame_wrt_camera_frame_ = Frame()
 
+		self.affine_gripper_frame_wrt_psm_frame_ = Frame()
+
 		default_p_lcamera_to_psm_one_ = Vector(-0.155,-0.03265,0.0)
 		default_R_lcamera_to_psm_one_ = Rotation(-1,0,0, 0,1,0, 0,0,-1)
 		self.default_affine_lcamera_to_psm_one_ = Frame(default_R_lcamera_to_psm_one_,default_p_lcamera_to_psm_one_)
@@ -298,7 +300,7 @@ class needle_planner:
 	    	print_affine(affine_tissue_frame_wrt_camera_frame_)
 
 
-	def compute_needle_drive_gripper_affines(self, gripper_affines_wrt_camera):
+	def compute_needle_drive_gripper_affines(self, gripper_affines_wrt_camera, gripper_affines_wrt_psm):
 	    
 	    phi_insertion_ = 0.0
 	    self.affine_needle_frame_wrt_tissue_ = self.affine_init_needle_frame_wrt_tissue_
@@ -351,6 +353,10 @@ class needle_planner:
 	        	print_affine(self.affine_gripper_frame_wrt_camera_frame_)
 	        
 	        gripper_affines_wrt_camera.append(self.affine_gripper_frame_wrt_camera_frame_)
+	        
+	        self.affine_gripper_frame_wrt_psm_frame_ = self.default_affine_lcamera_to_psm_one_.Inverse()*self.affine_gripper_frame_wrt_camera_frame_
+	        gripper_affines_wrt_psm.append(self.affine_gripper_frame_wrt_psm_frame_)
+
 	        phi_insertion_+=dphi
 
 	def simple_compute_needle_drive_gripper_affines(self, gripper_affines):
@@ -397,7 +403,7 @@ class needle_planner:
 
 
 
-	def simple_horiz_kvec_motion(self, O_needle, r_needle, kvec_yaw, gripper_affines_wrt_camera):
+	def simple_horiz_kvec_motion(self, O_needle, r_needle, kvec_yaw, gripper_affines_wrt_camera, gripper_affines_wrt_psm):
 	    dphi = math.pi/40.0
 	    bvec0 = Vector(1,0,0)
 	    nvec = Vector(0,0,-1)
@@ -409,6 +415,7 @@ class needle_planner:
 	    self.affine_gripper_frame_wrt_camera_frame_.p = tip_pos
 	    self.affine_gripper_frame_wrt_camera_frame_.M = R0
 	    del gripper_affines_wrt_camera[:]
+	    del gripper_affines_wrt_psm[:]
 	    nsolns = 0
 	    nphi = 0
 	    print "nphi: "
@@ -421,7 +428,7 @@ class needle_planner:
 	        R_column2 = Vector(R_column2_numpy[0],R_column2_numpy[1],R_column2_numpy[2])
 	        tip_pos = O_needle - r_needle*R_column2
 	        self.affine_gripper_frame_wrt_camera_frame_.p = tip_pos
-	        des_gripper1_wrt_base = self.default_affine_lcamera_to_psm_one_.Inverse()*self.affine_gripper_frame_wrt_camera_frame_
+	        self.affine_gripper_frame_wrt_psm_frame_ = self.default_affine_lcamera_to_psm_one_.Inverse()*self.affine_gripper_frame_wrt_camera_frame_
 	        ''' ERDEM
 	        if (ik_solver_.ik_solve(des_gripper1_wrt_base)) 
 	        {  nsolns++;
@@ -429,13 +436,15 @@ class needle_planner:
 	           #cout<<":  found IK; nsolns = "<<nsolns<<endl;
 	           gripper_affines_wrt_camera.push_back(affine_gripper_frame_wrt_camera_frame_);
 	        }'''
+	        gripper_affines_wrt_camera.append(self.affine_gripper_frame_wrt_camera_frame_)
+	        gripper_affines_wrt_psm.append(self.affine_gripper_frame_wrt_psm_frame_)
 	        nphi += 1
 
 	    print "\n"
 	        
 
 
-	def simple_horiz_kvec_motion_psm2(self, O_needle, r_needle, kvec_yaw, gripper_affines_wrt_camera):
+	def simple_horiz_kvec_motion_psm2(self, O_needle, r_needle, kvec_yaw, gripper_affines_wrt_camera, gripper_affines_wrt_psm):
 	    dphi = math.pi/40.0
 	    bvec0 = Vector(1,0,0)
 	    nvec = Vector(0,0,1)
@@ -447,6 +456,7 @@ class needle_planner:
 	    self.affine_gripper_frame_wrt_camera_frame_.p = tip_pos
 	    self.affine_gripper_frame_wrt_camera_frame_.M = R0
 	    del gripper_affines_wrt_camera[:]
+	    del gripper_affines_wrt_psm[:]
 	    nsolns = 0
 	    nphi = 0
 	    print "nphi: "
@@ -459,7 +469,9 @@ class needle_planner:
 	        R_column2 = Vector(R_column2_numpy[0],R_column2_numpy[1],R_column2_numpy[2])
 	        tip_pos = O_needle - r_needle*R_column2
 	        self.affine_gripper_frame_wrt_camera_frame_.p = tip_pos
-	        des_gripper1_wrt_base = self.default_affine_lcamera_to_psm_two_.Inverse()*self.affine_gripper_frame_wrt_camera_frame_
+	        #des_gripper2_wrt_base = self.default_affine_lcamera_to_psm_two_.Inverse()*self.affine_gripper_frame_wrt_camera_frame_
+	        self.affine_gripper_frame_wrt_psm_frame_ = self.default_affine_lcamera_to_psm_two_.Inverse()*self.affine_gripper_frame_wrt_camera_frame_
+
 	        ''' ERDEM
 	        if (ik_solver_.ik_solve(des_gripper1_wrt_base)) 
 	        {  nsolns++;
@@ -467,11 +479,13 @@ class needle_planner:
 	           #cout<<":  found IK; nsolns = "<<nsolns<<endl;
 	           gripper_affines_wrt_camera.push_back(affine_gripper_frame_wrt_camera_frame_);
 	        }'''
+	        gripper_affines_wrt_camera.append(self.affine_gripper_frame_wrt_camera_frame_)
+	        gripper_affines_wrt_psm.append(self.affine_gripper_frame_wrt_psm_frame_)
 	        nphi += 1
 
 	    print "\n"
 
-	def simple_test_gripper_motion(self, x, y, z, r, gripper_affines_wrt_camera):
+	def simple_test_gripper_motion(self, x, y, z, r, gripper_affines_wrt_camera, gripper_affines_wrt_psm):
 		print "\n"
 
 	def vers(self, phi):
@@ -538,8 +552,8 @@ class needle_planner:
 	    R_k_phi_Frame = posemath.fromMatrix(R_k_phi_numpy_Frame)
 	    R_k_phi = R_k_phi_Frame.M
 	    return R_k_phi
-
-	def write_needle_drive_affines_to_file(self, gripper_affines_wrt_camera):
+	    
+	def write_needle_drive_affines_to_file(self, gripper_affines_wrt_camera, gripper_affines_wrt_psm):
 
 		nposes = len(gripper_affines_wrt_camera)
 		if (nposes<1):
@@ -552,18 +566,19 @@ class needle_planner:
 
 
 		affine_gripper1_frame_wrt_camera_last = gripper_affines_wrt_camera[nposes-1]
-		affine_needle_frame_wrt_camera_last = affine_gripper1_frame_wrt_camera_last*self.affine_needle_frame_wrt_gripper_frame_
+		affine_gripper1_frame_wrt_psm_last = self.default_affine_lcamera_to_psm_one_.Inverse()*affine_gripper1_frame_wrt_camera_last
+		affine_needle_frame_wrt_psm_last = affine_gripper1_frame_wrt_psm_last*self.affine_needle_frame_wrt_gripper_frame_
 
-		affine_needle_frame_wrt_camera_last_numpy = posemath.toMatrix(affine_needle_frame_wrt_camera_last)
-		affine_needle_frame_wrt_camera_last_numpy_R = affine_needle_frame_wrt_camera_last_numpy[0:3,0:3] 
+		affine_needle_frame_wrt_psm_last_numpy = posemath.toMatrix(affine_needle_frame_wrt_psm_last)
+		affine_needle_frame_wrt_psm_last_numpy_R = affine_needle_frame_wrt_psm_last_numpy[0:3,0:3] 
 		
 		#BELOW do rest of the calculations with numpy array to prevent data type mismatch
 		#and convert to PyKDL at the end'''
 
-		nvec_needle = affine_needle_frame_wrt_camera_last_numpy_R[0:,0]
-		bvec_needle = affine_needle_frame_wrt_camera_last_numpy_R[0:,2]
+		nvec_needle = affine_needle_frame_wrt_psm_last_numpy_R[0:,0]
+		bvec_needle = affine_needle_frame_wrt_psm_last_numpy_R[0:,2]
 
-		origin_needle = affine_needle_frame_wrt_camera_last.p
+		origin_needle = affine_needle_frame_wrt_psm_last.p
 		origin_needle_numpy = np.array([origin_needle.x(),origin_needle.y(),origin_needle.z()])
 		tip_of_needle_numpy = origin_needle_numpy + self.needle_radius_*nvec_needle
 		
@@ -594,36 +609,36 @@ class needle_planner:
 		print "origin: "
 		print self.default_affine_lcamera_to_psm_one_.p
 
-		psm2_nom_wrt_camera = self.default_affine_lcamera_to_psm_two_*psm2_nom_wrt_base2
+		psm2_nom_wrt_psm = psm2_nom_wrt_base2
 
-		print "psm2_nom_wrt_camera: "
-		print psm2_nom_wrt_camera.M
+		print "psm2_nom_wrt_psm: "
+		print psm2_nom_wrt_psm.M
 		print "origin: "
-		print psm2_nom_wrt_camera.p
+		print psm2_nom_wrt_psm.p
 
 		#'''BELOW switch back to numpy BELOW '''
 		
-		psm2_nom_wrt_camera_numpy = posemath.toMatrix(psm2_nom_wrt_camera)
-		psm2_nom_wrt_camera_numpy_R = psm2_nom_wrt_camera_numpy[0:3,0:3] 
+		psm2_nom_wrt_psm_numpy = posemath.toMatrix(psm2_nom_wrt_psm)
+		psm2_nom_wrt_psm_numpy_R = psm2_nom_wrt_psm_numpy[0:3,0:3] 
 
-		nvec_gripper2 = psm2_nom_wrt_camera_numpy_R[0:,0]
-		tvec_gripper2 = psm2_nom_wrt_camera_numpy_R[0:,1]
-		bvec_gripper2 = psm2_nom_wrt_camera_numpy_R[0:,2]
+		nvec_gripper2 = psm2_nom_wrt_psm_numpy_R[0:,0]
+		tvec_gripper2 = psm2_nom_wrt_psm_numpy_R[0:,1]
+		bvec_gripper2 = psm2_nom_wrt_psm_numpy_R[0:,2]
 
-		gripper2_out_of_way_wrt_camera = psm2_nom_wrt_camera.p
+		gripper2_out_of_way_wrt_psm = psm2_nom_wrt_psm.p
 
 
 		t = 4
 		dt = 1
 
-		outfile = open('gripper_poses_in_camera_coords.txt','w')
+		outfile = open('gripper_poses_in_psm_coords.csp','w')
 
 		for i in range(nposes):
-			gripper_affines_wrt_camera_this = gripper_affines_wrt_camera[i]
-			#Origin = gripper_affines_wrt_camera_this.p
-			#R = gripper_affines_wrt_camera_this.M
+			gripper_affines_wrt_psm_this = gripper_affines_wrt_psm[i]
+			#Origin = gripper_affines_wrt_psm_this.p
+			#R = gripper_affines_wrt_psm_this.M
 
-			gripper_numpy = posemath.toMatrix(gripper_affines_wrt_camera_this)
+			gripper_numpy = posemath.toMatrix(gripper_affines_wrt_psm_this)
 			R = gripper_numpy[0:3,0:3] 
 			Origin = gripper_numpy[0:3,3]
 
@@ -636,19 +651,19 @@ class needle_planner:
 			outfile.write(str("%0.3f"%nvec[0]) + ', ' + str("%0.3f"%nvec[1]) + ', ' + str("%0.3f"%nvec[2]) + ',     ')
 			outfile.write(str("%0.3f"%bvec[0]) + ', ' + str("%0.3f"%bvec[1]) + ', ' + str("%0.3f"%bvec[2]) + ',  0,   ')
 
-			outfile.write(str("%0.3f"%gripper2_out_of_way_wrt_camera.x()) + ', ' + str("%0.3f"%gripper2_out_of_way_wrt_camera.y()) + ', ' + str("%0.3f"%gripper2_out_of_way_wrt_camera.z()) + '     ')
+			outfile.write(str("%0.3f"%gripper2_out_of_way_wrt_psm.x()) + ', ' + str("%0.3f"%gripper2_out_of_way_wrt_psm.y()) + ', ' + str("%0.3f"%gripper2_out_of_way_wrt_psm.z()) + ',     ')
 			outfile.write(str("%0.3f"%nvec_gripper2[0]) + ', ' + str("%0.3f"%nvec_gripper2[1]) + ', ' + str("%0.3f"%nvec_gripper2[2]) + ',     ')
-			outfile.write(str("%0.3f"%bvec_gripper2[0]) + ', ' + str("%0.3f"%bvec_gripper2[1]) + ', ' + str("%0.3f"%bvec_gripper2[2]) + ',  0.0   ' + str("%0.2f"%t) + '\n')
+			outfile.write(str("%0.3f"%bvec_gripper2[0]) + ', ' + str("%0.3f"%bvec_gripper2[1]) + ', ' + str("%0.3f"%bvec_gripper2[2]) + ',  0.0,   ' + str("%0.2f"%t) + '\n')
 
 
 			t+=dt
 
 		outfile.close()
-		print("wrote gripper motion plan to file gripper_poses_in_camera_coords.txt")
-		rospy.loginfo("wrote gripper motion plan to file gripper_poses_in_camera_coords.txt")
+		print("wrote gripper motion plan to file gripper_poses_in_psm_coords.csp")
+		rospy.loginfo("wrote gripper motion plan to file gripper_poses_in_psm_coords.csp")
 
 
-	def write_psm2_needle_drive_affines_to_file(self, psm2_gripper_affines_wrt_camera):
+	def write_psm2_needle_drive_affines_to_file(self, psm2_gripper_affines_wrt_camera, psm1_gripper_affines_wrt_camera):
 
 
 		nposes = len(psm2_gripper_affines_wrt_camera)
@@ -662,19 +677,20 @@ class needle_planner:
 
 
 		affine_gripper2_frame_wrt_camera_last = psm2_gripper_affines_wrt_camera[nposes-1]
-		affine_needle_frame_wrt_camera_last = affine_gripper2_frame_wrt_camera_last*self.affine_needle_frame_wrt_gripper_frame_
+		affine_gripper1_frame_wrt_psm_last_ = self.default_affine_lcamera_to_psm_two_.Inverse()*affine_gripper1_frame_wrt_camera_last
+		affine_needle_frame_wrt_psm_last = affine_gripper2_frame_wrt_psm_last*self.affine_needle_frame_wrt_gripper_frame_
 
-		affine_needle_frame_wrt_camera_last_numpy = posemath.toMatrix(affine_needle_frame_wrt_camera_last)
-		affine_needle_frame_wrt_camera_last_numpy_R = affine_needle_frame_wrt_camera_last_numpy[0:3,0:3] 
+		affine_needle_frame_wrt_psm_last_numpy = posemath.toMatrix(affine_needle_frame_wrt_psm_last)
+		affine_needle_frame_wrt_psm_last_numpy_R = affine_needle_frame_wrt_psm_last_numpy[0:3,0:3] 
 		
 		#'''BELOW do rest of the calculations with numpy array to prevent data type mismatch
 		#and convert to PyKDL at the end'''
 
-		nvec_needle = affine_needle_frame_wrt_camera_last_numpy_R[0:,0]
-		bvec_needle = affine_needle_frame_wrt_camera_last_numpy_R[0:,2]
-		tvec_needle = affine_needle_frame_wrt_camera_last_numpy_R[0:,1]
+		nvec_needle = affine_needle_frame_wrt_psm_last_numpy_R[0:,0]
+		bvec_needle = affine_needle_frame_wrt_psm_last_numpy_R[0:,2]
+		tvec_needle = affine_needle_frame_wrt_psm_last_numpy_R[0:,1]
 
-		origin_needle = affine_needle_frame_wrt_camera_last.p
+		origin_needle = affine_needle_frame_wrt_psm_last.p
 		origin_needle_numpy = np.array([origin_needle.x(),origin_needle.y(),origin_needle.z()])
 		tip_of_needle_numpy = origin_needle_numpy + self.needle_radius_*nvec_needle
 		
@@ -733,14 +749,14 @@ class needle_planner:
 		t = 4
 		dt = 1
 
-		outfile = open('psm2_gripper_poses_in_camera_coords.txt','w')
+		outfile = open('psm2_gripper_poses_in_ps_coords.csp','w')
 		
 		for i in range(nposes):
-			psm2_gripper_affines_wrt_camera_this = psm2_gripper_affines_wrt_camera[i]
-			#Origin = gripper_affines_wrt_camera_this.p
-			#R = gripper_affines_wrt_camera_this.M
+			psm2_gripper_affines_wrt_ps_this = psm2_gripper_affines_wrt_ps[i]
+			#Origin = gripper_affines_wrt_ps_this.p
+			#R = gripper_affines_wrt_ps_this.M
 
-			gripper_numpy = posemath.toMatrix(psm2_gripper_affines_wrt_camera_this)
+			gripper_numpy = posemath.toMatrix(psm2_gripper_affines_wrt_ps_this)
 			R = gripper_numpy[0:3,0:3] 
 			Origin = gripper_numpy[0:3,3]
 
@@ -753,14 +769,14 @@ class needle_planner:
 			outfile.write(str("%0.3f"%nvec[0]) + ', ' + str("%0.3f"%nvec[1]) + ', ' + str("%0.3f"%nvec[2]) + ',     ')
 			outfile.write(str("%0.3f"%bvec[0]) + ', ' + str("%0.3f"%bvec[1]) + ', ' + str("%0.3f"%bvec[2]) + ',  0,   ')
 
-			outfile.write(str("%0.3f"%gripper2_out_of_way_numpy[0]) + ', ' + str("%0.3f"%gripper2_out_of_way_numpy[1]) + ', ' + str("%0.3f"%gripper2_out_of_way_numpy[2]) + '     ')
+			outfile.write(str("%0.3f"%gripper2_out_of_way_numpy[0]) + ', ' + str("%0.3f"%gripper2_out_of_way_numpy[1]) + ', ' + str("%0.3f"%gripper2_out_of_way_numpy[2]) + ',     ')
 			outfile.write(str("%0.3f"%nvec2[0]) + ', ' + str("%0.3f"%nvec2[1]) + ', ' + str("%0.3f"%nvec2[2]) + ',     ')
-			outfile.write(str("%0.3f"%bvec2[0]) + ', ' + str("%0.3f"%bvec2[1]) + ', ' + str("%0.3f"%bvec2[2]) + ',  0.0   ' + str("%0.2f"%t) + '\n')
+			outfile.write(str("%0.3f"%bvec2[0]) + ', ' + str("%0.3f"%bvec2[1]) + ', ' + str("%0.3f"%bvec2[2]) + ',  0.0,   ' + str("%0.2f"%t) + '\n')
 
 
 			t+=dt
 		
 		
 		outfile.close()
-		print("wrote gripper motion plan to file psm2_gripper_poses_in_camera_coords.txt") 
-		rospy.loginfo("wrote gripper motion plan to file psm2_gripper_poses_in_camera_coords.txt") 
+		print("wrote gripper motion plan to file psm2_gripper_poses_in_ps_coords.csp") 
+		rospy.loginfo("wrote gripper motion plan to file psm2_gripper_poses_in_ps_coords.csp") 

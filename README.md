@@ -12,7 +12,7 @@ We use the catkin build tools, NOT catkin_make.  Please don't use catkin_make
 * dvrk_robot **[maintained]** 
   * Main file to start dVRK (`dvrk_console_json`), publish & subscribe ros topics
   * Lauch files to start RViz with geometric simulation
-* dvrk_model **[maintained]**
+* dvrk_model2 **[maintained]**
   * CAD models & meshes
   * RViz configs
   * Launch files

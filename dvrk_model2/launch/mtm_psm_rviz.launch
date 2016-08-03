@@ -1,8 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!-- one mtmr + one psm1  -->
 
 <launch>
   <group ns="/dvrk_mtm">
-    <arg name="model" default="$(find dvrk_model)/model/mtm_right.urdf.xacro" />
+    <arg name="model" default="$(find dvrk_model2)/model/mtm_right.urdf.xacro" />
     <arg name="gui" default="true" />
     <arg name="rate" default="200" />
     
@@ -25,7 +26,7 @@
   </group>
 
   <group ns="/dvrk_psm">
-    <arg name="model" default="$(find dvrk_model)/model/psm_one.urdf.xacro" />
+    <arg name="model" default="$(find dvrk_model2)/model/psm_one.urdf.xacro" />
     <arg name="gui" default="true" />
     <arg name="rate" default="200" />
 
@@ -45,7 +46,7 @@
   </group>
   
   <node name="rviz" pkg="rviz" type="rviz"
-    args="-d $(find dvrk_model)/rviz_config/mtm_psm.rviz" />
+    args="-d $(find dvrk_model2)/rviz_config/mtm_psm.rviz" />
   
 </launch>
 

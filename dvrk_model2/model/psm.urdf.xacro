@@ -2,9 +2,9 @@
 <robot name="dvrk_psm" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
   <!-- Macros -->
-  <xacro:include filename="$(find dvrk_model)/model/psm.base.urdf.xacro"/>
-  <xacro:include filename="$(find dvrk_model)/model/psm.tool.sca.urdf.xacro"/>
-  <xacro:include filename="$(find dvrk_model)/model/psm.tool.caudier.urdf.xacro"/>
+  <xacro:include filename="$(find dvrk_model2)/model/psm.base.urdf.xacro"/>
+  <xacro:include filename="$(find dvrk_model2)/model/psm.tool.sca.urdf.xacro"/>
+  <xacro:include filename="$(find dvrk_model2)/model/psm.tool.caudier.urdf.xacro"/>
 
   <!-- Macro for psm with sca -->
   <xacro:macro name="psm_sca" params="prefix parent_link xyz rpy">
