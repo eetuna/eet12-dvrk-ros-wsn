@@ -768,18 +768,18 @@ class needle_planner:
 			R = gripper_numpy[0:3,0:3] 
 			Origin = gripper_numpy[0:3,3]
 
-			outfile.write(str("%0.3f"%Origin[0]) + ', ' + str("%0.3f"%Origin[1]) + ', ' + str("%0.3f"%Origin[2]) + ',     ')
+			outfile.write(str("%0.6f"%Origin[0]) + ', ' + str("%0.6f"%Origin[1]) + ', ' + str("%0.6f"%Origin[2]) + ',     ')
 
 			nvec = R[0:,0]
 			tvec = R[0:,1]
 			bvec = R[0:,2]
 
-			outfile.write(str("%0.3f"%nvec[0]) + ', ' + str("%0.3f"%nvec[1]) + ', ' + str("%0.3f"%nvec[2]) + ',     ')
-			outfile.write(str("%0.3f"%bvec[0]) + ', ' + str("%0.3f"%bvec[1]) + ', ' + str("%0.3f"%bvec[2]) + ',  0,   ')
+			outfile.write(str("%0.6f"%nvec[0]) + ', ' + str("%0.6f"%nvec[1]) + ', ' + str("%0.6f"%nvec[2]) + ',     ')
+			outfile.write(str("%0.6f"%bvec[0]) + ', ' + str("%0.6f"%bvec[1]) + ', ' + str("%0.6f"%bvec[2]) + ',  0,   ')
 
-			outfile.write(str("%0.3f"%gripper2_out_of_way_wrt_psm.x()) + ', ' + str("%0.3f"%gripper2_out_of_way_wrt_psm.y()) + ', ' + str("%0.3f"%gripper2_out_of_way_wrt_psm.z()) + ',     ')
-			outfile.write(str("%0.3f"%nvec_gripper2[0]) + ', ' + str("%0.3f"%nvec_gripper2[1]) + ', ' + str("%0.3f"%nvec_gripper2[2]) + ',     ')
-			outfile.write(str("%0.3f"%bvec_gripper2[0]) + ', ' + str("%0.3f"%bvec_gripper2[1]) + ', ' + str("%0.3f"%bvec_gripper2[2]) + ',  0.0,   ' + str("%0.2f"%t) + '\n')
+			outfile.write(str("%0.6f"%gripper2_out_of_way_wrt_psm.x()) + ', ' + str("%0.6f"%gripper2_out_of_way_wrt_psm.y()) + ', ' + str("%0.6f"%gripper2_out_of_way_wrt_psm.z()) + ',     ')
+			outfile.write(str("%0.6f"%nvec_gripper2[0]) + ', ' + str("%0.6f"%nvec_gripper2[1]) + ', ' + str("%0.6f"%nvec_gripper2[2]) + ',     ')
+			outfile.write(str("%0.6f"%bvec_gripper2[0]) + ', ' + str("%0.6f"%bvec_gripper2[1]) + ', ' + str("%0.6f"%bvec_gripper2[2]) + ',  0.0,   ' + str("%0.2f"%t) + '\n')
 
 
 			t+=dt
@@ -886,18 +886,18 @@ class needle_planner:
 			R = gripper_numpy[0:3,0:3] 
 			Origin = gripper_numpy[0:3,3]
 
-			outfile.write(str("%0.3f"%Origin[0]) + ', ' + str("%0.3f"%Origin[1]) + ', ' + str("%0.3f"%Origin[2]) + ',     ')
+			outfile.write(str("%0.6f"%Origin[0]) + ', ' + str("%0.6f"%Origin[1]) + ', ' + str("%0.6f"%Origin[2]) + ',     ')
 
 			nvec = R[0:,0]
 			tvec = R[0:,1]
 			bvec = R[0:,2]
 
-			outfile.write(str("%0.3f"%nvec[0]) + ', ' + str("%0.3f"%nvec[1]) + ', ' + str("%0.3f"%nvec[2]) + ',     ')
-			outfile.write(str("%0.3f"%bvec[0]) + ', ' + str("%0.3f"%bvec[1]) + ', ' + str("%0.3f"%bvec[2]) + ',  0,   ')
+			outfile.write(str("%0.6f"%nvec[0]) + ', ' + str("%0.6f"%nvec[1]) + ', ' + str("%0.6f"%nvec[2]) + ',     ')
+			outfile.write(str("%0.6f"%bvec[0]) + ', ' + str("%0.6f"%bvec[1]) + ', ' + str("%0.6f"%bvec[2]) + ',  0,   ')
 
-			outfile.write(str("%0.3f"%gripper2_out_of_way_numpy[0]) + ', ' + str("%0.3f"%gripper2_out_of_way_numpy[1]) + ', ' + str("%0.3f"%gripper2_out_of_way_numpy[2]) + ',     ')
-			outfile.write(str("%0.3f"%nvec2[0]) + ', ' + str("%0.3f"%nvec2[1]) + ', ' + str("%0.3f"%nvec2[2]) + ',     ')
-			outfile.write(str("%0.3f"%bvec2[0]) + ', ' + str("%0.3f"%bvec2[1]) + ', ' + str("%0.3f"%bvec2[2]) + ',  0.0,   ' + str("%0.2f"%t) + '\n')
+			outfile.write(str("%0.6f"%gripper2_out_of_way_numpy[0]) + ', ' + str("%0.6f"%gripper2_out_of_way_numpy[1]) + ', ' + str("%0.6f"%gripper2_out_of_way_numpy[2]) + ',     ')
+			outfile.write(str("%0.6f"%nvec2[0]) + ', ' + str("%0.6f"%nvec2[1]) + ', ' + str("%0.6f"%nvec2[2]) + ',     ')
+			outfile.write(str("%0.6f"%bvec2[0]) + ', ' + str("%0.6f"%bvec2[1]) + ', ' + str("%0.6f"%bvec2[2]) + ',  0.0,   ' + str("%0.2f"%t) + '\n')
 
 
 			t+=dt
