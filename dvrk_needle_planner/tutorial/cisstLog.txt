@@ -1,0 +1,5 @@
+M- cisst 1.0.7 (git: 1.0.7)
+M- CISST_ROOT: undefined
+M- cisst share: undefined
+M- cmn_m: 1, cmn_kg: 1, CISST_USE_SI_UNITS is set to 1
+-E File: robManipulator.cpp Line: 375 -  File: robManipulator.cpp Line: 375 - : Expected 0 joints values.  Got 7

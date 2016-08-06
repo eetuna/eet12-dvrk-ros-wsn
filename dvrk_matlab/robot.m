@@ -132,7 +132,7 @@ classdef robot < handle
 
             % position goal joint
             topic = strcat(self.ros_name, '/set_position_goal_joint');
-            self.position_goal_joint_publisher = rospublisher(topic, rostype.sensor_msgs_JointState);
+            self.position_goal_joint_publisher = rospublisher(topic, rostype.sesnsor_msgs_JointState);
 
             % position goal joint
             topic = strcat(self.ros_name, '/set_position_goal_cartesian');
