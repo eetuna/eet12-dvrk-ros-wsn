@@ -75,7 +75,7 @@ import sys
 import logging
 import time
 import inspect
-import code
+import copy
 import IPython
 import math
 #import PyKDL
@@ -119,17 +119,14 @@ if result:
 else:
 	print "Robot Loading is a Success"
 
-""" Initialize the IK output joint vector """
-qvecIK_Test= np.array([0., 0., 0., 0., 0., 0.])
-
+debug_needle_print = False
+debug_needle_print2 = False
+debug_needle_print3 = False
 
 frame6to7 = np.matrix([[0.0, -1.0, 0.0, 0.0],
                      [0.0,  0.0, 1.0, 0.0102],
                      [-1.0, 0.0, 0.0, 0.0],
                      [0.0,  0.0, 0.0, 1.0]])
-
-debug_needle_print = bool('')
-
 #debug_needle_print = True
 
 DEFAULT_NEEDLE_GRASP_DEPTH = 0.005 #default: grab needle at jaw mid-point
@@ -144,7 +141,28 @@ DEFAULT_NEEDLE_AXIS_HT= DEFAULT_NEEDLE_RADIUS/math.sqrt(2.0) # height of needle 
 NSAMPS_DRIVE_PLAN = 21 # decide how many samples of grasp poses to compute for needle drive over 180 deg
 #phi grab at 0.0--> grab in middle of arc
 DEFAULT_PHI_GRAB = 0.0# M_PI/2.0; #puts tail of needle in middle of gripper--really not feasible
+	
+# NEED TO FIND THESE:
+DH_q_max0 = 1.0 #deg2rad*45 #141 #51
+DH_q_max1 = 0.7 #deg2rad*45
+DH_q_max2 = 0.23 #0.5
+DH_q_max3 = 2.25 #deg2rad*180
+DH_q_max4 = 1.57 #deg2rad*90
+DH_q_max5 = 1.39 #deg2rad*90 #
+DH_q_max6 = 1.57 #deg2rad*90
 
+#-141, -123, -173.5, -3, -175.25, -90, -175.25
+DH_q_min0 = -1.0 #-deg2rad*45 #51 #141
+DH_q_min1 = -0.7 #-deg2rad*45
+DH_q_min2 =  0.01 
+DH_q_min3 = -2.25 #-deg2rad*180
+DH_q_min4 = -1.57 #-deg2rad*90
+DH_q_min5 = -1.39 #-deg2rad*90 #
+DH_q_min6 = -1.57 #-deg2rad*90
+
+
+q_lower_limits = np.array([DH_q_min0,DH_q_min1, DH_q_min2, DH_q_min3, DH_q_min4, DH_q_min5, DH_q_min6])
+q_upper_limits = np.array([DH_q_max0,DH_q_max1, DH_q_max2, DH_q_max3, DH_q_max4, DH_q_max5, DH_q_max6])
 
 class needle_planner:
 	def __init__(self):
@@ -236,6 +254,11 @@ class needle_planner:
 		default_R_lcamera_to_psm_one_ = Rotation(-1,0,0, 0,1,0, 0,0,-1)
 		self.default_affine_lcamera_to_psm_one_ = Frame(default_R_lcamera_to_psm_one_,default_p_lcamera_to_psm_one_)
 		self.default_affine_lcamera_to_psm_two_ = Frame()
+
+
+		""" Initialize the IK output joint vector """
+		self.qvecIK = np.array([0., 0., 0., 0., 0., 0.])
+
 
 
 	def set_needle_radius(self, r): #float r
@@ -506,70 +529,97 @@ class needle_planner:
 
 
 	def simple_horiz_kvec_motion(self, O_needle, r_needle, kvec_yaw, gripper_affines_wrt_camera):
-	    dphi = math.pi/40.0
-	    bvec0 = Vector(1,0,0)
-	    nvec = Vector(0,0,-1)
-	    bvec = self.Rotz(kvec_yaw)*bvec0
-	    tvec = bvec*nvec
-	    R0 = Rotation(nvec,tvec,bvec)
-	    #R0 = R0.Inverse()
-	    tvec_numpy = np.array([tvec.x(), tvec.y(), tvec.z()])
-	    tip_pos_numpy = O_needle - r_needle*tvec_numpy
-	    tip_pos = Vector(tip_pos_numpy[0], tip_pos_numpy[1], tip_pos_numpy[2])
+		""" Initialize the IK output joint vector """
+		dphi = math.pi/40.0
+		bvec0 = Vector(1,0,0)
+		nvec = Vector(0,0,-1)
+		bvec = self.Rotz(kvec_yaw)*bvec0
+		tvec = bvec*nvec
+		R0 = Rotation(nvec,tvec,bvec)
+		#R0 = R0.Inverse()
+		tvec_numpy = np.array([tvec.x(), tvec.y(), tvec.z()])
+		tip_pos_numpy = O_needle - r_needle*tvec_numpy
+		tip_pos = Vector(tip_pos_numpy[0], tip_pos_numpy[1], tip_pos_numpy[2])
 
-	    self.affine_gripper_frame_wrt_camera_frame_.p = tip_pos
-	    self.affine_gripper_frame_wrt_camera_frame_.M = R0
-	    del gripper_affines_wrt_camera[:]
-	    nsolns = 0
-	    nphi = 0
-	    print "nphi: "
- 
-	    for phi in np.arange(0,math.pi,dphi): #use arange from numpy for double increments
-	        R = self.Rot_k_phi(bvec, phi)*R0
-	        self.affine_gripper_frame_wrt_camera_frame_.M=R
-	        R_Frame = posemath.toMatrix(self.affine_gripper_frame_wrt_camera_frame_)
-	        R_column2_numpy = R_Frame[0:3,1]
-	        R_column2 = Vector(R_column2_numpy[0],R_column2_numpy[1],R_column2_numpy[2])
-	        tip_pos_numpy = O_needle - r_needle*R_column2_numpy
-	        tip_pos = Vector(tip_pos_numpy[0], tip_pos_numpy[1], tip_pos_numpy[2])
+		self.affine_gripper_frame_wrt_camera_frame_.p = tip_pos
+		self.affine_gripper_frame_wrt_camera_frame_.M = R0
+		del gripper_affines_wrt_camera[:]
+		nsolns = 0
+		nphi = 0
+		print "nphi: "
 
-	        self.affine_gripper_frame_wrt_camera_frame_.p = tip_pos
-	        self.affine_gripper_frame_wrt_psm_frame_ = self.default_affine_lcamera_to_psm_one_.Inverse()*self.affine_gripper_frame_wrt_camera_frame_
-	        # ''' ERDEM
-	        # 
-	        affine_gripper_frame_wrt_psm_frame_numpyArray =  posemath.toMatrix(self.affine_gripper_frame_wrt_psm_frame_)
-	        affine_gripper_frame_wrt_psm_frame_numpyMatrix_0to7 = np.matrix(affine_gripper_frame_wrt_psm_frame_numpyArray)
-	        affine_gripper_frame_wrt_psm_frame_numpyMatrix_0to6 = affine_gripper_frame_wrt_psm_frame_numpyMatrix_0to7 * inv(frame6to7)
-	        
-	        print "affine_gripper_frame_wrt_psm_frame_numpyMatrix_0to6", affine_gripper_frame_wrt_psm_frame_numpyMatrix_0to6
-	        affine_0to6 = deepcopy(affine_gripper_frame_wrt_psm_frame_numpyMatrix_0to6)
-	        print "affine_0to6", affine_0to6
-	        qvecIK = deepcopy(qvecIK_Test)
-	        print "qvecIK", qvecIK
-	        result = psm_manip.InverseKinematics(qvecIK, affine_0to6)
-	        if result:
-	        	success = bool('')
-	        else:
-	        	success = True
-	        print "qvecIK after computation", qvecIK
-	        if (success):
-	        	nsolns+=1
-	        	print nphi,","
-	        	gripper_affines_wrt_camera.append(self.affine_gripper_frame_wrt_camera_frame_)
-	        	#gripper_affines_wrt_psm.append(self.affine_gripper_frame_wrt_psm_frame_)
+		if debug_needle_print2:
+			print "bvec: ", bvec
+			print "tvec: ", tvec
+			print "tip_pos: ", tip_pos
+			print "R0: ", R0
 
-	        # '''
-	        '''
-	        gripper_affines_wrt_camera.append(self.affine_gripper_frame_wrt_camera_frame_)
-	        gripper_affines_wrt_psm.append(self.affine_gripper_frame_wrt_psm_frame_)
-	        '''
-	        nphi += 1
+		for phi in np.arange(0,math.pi,dphi): #use arange from numpy for double increments
+			R = self.Rot_k_phi(bvec, phi)*R0
+			self.affine_gripper_frame_wrt_camera_frame_.M=R
+			R_Frame = posemath.toMatrix(self.affine_gripper_frame_wrt_camera_frame_)
+			R_column2_numpy = R_Frame[0:3,1]
+			R_column2 = Vector(R_column2_numpy[0],R_column2_numpy[1],R_column2_numpy[2])
+			tip_pos_numpy = O_needle - r_needle*R_column2_numpy
+			tip_pos = Vector(tip_pos_numpy[0], tip_pos_numpy[1], tip_pos_numpy[2])
 
-	    print "\n"
+			self.affine_gripper_frame_wrt_camera_frame_.p = tip_pos
+			self.affine_gripper_frame_wrt_psm_frame_ = self.default_affine_lcamera_to_psm_one_.Inverse()*self.affine_gripper_frame_wrt_camera_frame_
+			# ''' ERDEM
+			# 
+			affine_gripper_frame_wrt_psm_frame_numpyArray =  posemath.toMatrix(self.affine_gripper_frame_wrt_psm_frame_)
+			affine_gripper_frame_wrt_psm_frame_numpyMatrix_0to7 = np.matrix(affine_gripper_frame_wrt_psm_frame_numpyArray)
+			affine_gripper_frame_wrt_psm_frame_numpyMatrix_0to6 = affine_gripper_frame_wrt_psm_frame_numpyMatrix_0to7 * inv(frame6to7)
+
+			#print "affine_gripper_frame_wrt_psm_frame_numpyMatrix_0to6", affine_gripper_frame_wrt_psm_frame_numpyMatrix_0to6
+			affine_0to6 = deepcopy(affine_gripper_frame_wrt_psm_frame_numpyMatrix_0to6)
+			#print "affine_0to6", affine_0to6
+			#print "qvecIK", qvecIK
+			result = psm_manip.InverseKinematics(self.qvecIK, affine_0to6)
+
+			jointLimitCheckBool = self.fit_joints_to_range(self.qvecIK)
+			if result:
+				success = False
+			else:
+				if jointLimitCheckBool: #legal soln
+					success = True 
+				else: #no legal soln out of joint lims
+					success = False 
+
+			if debug_needle_print2:
+				print "start printing\n"
+				print "\n nphi \n", nphi
+				print "\nR: \n", R
+				print "\ntip_pose: \n", tip_pos
+				print "\nself.affine_gripper_frame_wrt_psm_frame_ \n", self.affine_gripper_frame_wrt_psm_frame_
+				print "\nself.qvecIK \n", self.qvecIK
+
+			#print "qvecIK after computation", qvecIK
+			if (success):
+				affine_camera = deepcopy(self.affine_gripper_frame_wrt_camera_frame_)
+				nsolns+=1
+				print nphi,","
+				#print "\nqvecIK before computation", qvecIK_before
+				if debug_needle_print2:
+					print "\nqvecIK after computation", self.qvecIK
+				if debug_needle_print3:
+					print "self.affine_gripper_frame_wrt_camera_frame_",affine_camera
+				gripper_affines_wrt_camera.append(affine_camera)
+			#gripper_affines_wrt_psm.append(self.affine_gripper_frame_wrt_psm_frame_)
+
+			# '''
+			'''
+			gripper_affines_wrt_camera.append(self.affine_gripper_frame_wrt_camera_frame_)
+			gripper_affines_wrt_psm.append(self.affine_gripper_frame_wrt_psm_frame_)
+			'''
+			nphi += 1
+
+		print "\n"
 	        
 
 
 	def simple_horiz_kvec_motion_psm2(self, O_needle, r_needle, kvec_yaw, gripper_affines_wrt_camera):
+
 	    dphi = math.pi/40.0
 	    bvec0 = Vector(1,0,0)
 	    nvec = Vector(0,0,1)
@@ -609,19 +659,26 @@ class needle_planner:
 	        
 
 	        affine_0to6 = deepcopy(affine_gripper_frame_wrt_psm_frame_numpyMatrix_0to6)
-	        print "affine_0to6", affine_0to6
-	        qvecIK = deepcopy(qvecIK_Test)
-	        print "qvecIK", qvecIK
+	        #print "affine_0to6", affine_0to6
+	        # qvecIK = deepcopy(qvecIK_Test)
+	        #print "qvecIK", qvecIK
+	        #
+	        result = psm_manip.InverseKinematics(self.qvecIK, affine_0to6)
 
-	        result = psm_manip.InverseKinematics(qvecIK, affine_0to6)
+	        jointLimitCheckBool = self.fit_joints_to_range(self.qvecIK)
 	        if result:
-	        	success = bool('')
+	        	success = False
 	        else:
-	        	success = True
+	        	if jointLimitCheckBool:
+	        		success = True #legal soln
+	        	else:
+	        		success = False #no legal soln out of joint lims
+	        
 	        if (success):
+	        	affine_camera = deepcopy(self.affine_gripper_frame_wrt_camera_frame_)
 	        	nsolns+=1
 	        	print nphi,","
-	        	gripper_affines_wrt_camera.append(self.affine_gripper_frame_wrt_camera_frame_)
+	        	gripper_affines_wrt_camera.append(affine_camera)
 	        	#gripper_affines_wrt_psm.append(self.affine_gripper_frame_wrt_psm_frame_)
 	        
 
@@ -981,4 +1038,46 @@ class needle_planner:
 		
 		outfile.close()
 		print("wrote gripper motion plan to file psm2_gripper_poses_in_camera_coords.csp") 
-		rospy.loginfo("wrote gripper motion plan to file psm2_gripper_poses_in_camera_coords.csp") 
+		rospy.loginfo("wrote gripper motion plan to file psm2_gripper_poses_in_camera_coords.csp")
+
+	def fit_q_to_range(self, q_min, q_max, i):
+	    while (self.qvecIK[i]<q_min):
+	        self.qvecIK[i]+= 2.0*math.pi
+	    
+	    while (self.qvecIK[i]>q_max):
+	        self.qvecIK[i]-= 2.0*math.pi
+	    
+	    if (self.qvecIK[i]<q_min):
+	        return False #rtn false if no periodic soln in range
+	    else:
+	        return True
+
+	def fit_joints_to_range(self, qvec):
+		self.qvecIK = qvec
+		fits = True
+		does_fit = False
+		for i in range(6):
+			#print "qvec", qvec
+		    #q = qvec[i]
+		    #treat d3 differently
+		    if (i!=2): 
+		        does_fit = self.fit_q_to_range(q_lower_limits[i],q_upper_limits[i],i)
+		    #special case for d3...although generic formula also works in this case
+		    else:
+		        does_fit = True
+		        if (self.qvecIK[i] < q_lower_limits[i]): 
+		            does_fit = False
+		        if (self.qvecIK[i] > q_upper_limits[i]): 
+		            does_fit = False
+		    
+		    if (not does_fit): 
+		        if(debug_needle_print):
+		            rospy.logwarn("IK err: jnt %d  lower lim: %f upper lim: %f desired val = %f"%(i,q_lower_limits[i],q_upper_limits[i],self.qvecIK))
+		    
+		    #qvec[i] = q
+		    fits = fits and does_fit
+
+		if (fits):
+		    return True
+		else:
+		    return False

@@ -135,11 +135,14 @@ if __name__ == '__main__':
 
 
     rospy.loginfo("entering loop")
-    count = 0
+    #count = 0
     while not rospy.is_shutdown():
+        '''
         if (count == 1):
             print "count: ",count
             break
+        count += 1
+        '''
         #compute O_needle from entry and exit points:
         O_needle = 0.5 * (g_O_entry_point + g_O_exit_point)
         O_needle[2] -= DEFAULT_NEEDLE_AXIS_HT
@@ -183,4 +186,3 @@ if __name__ == '__main__':
 
         #d = rospy.Duration(0.01, 0)
         rospy.sleep(0.01)
-        count += 1
