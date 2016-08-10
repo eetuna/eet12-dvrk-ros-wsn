@@ -81,6 +81,7 @@ import math
 #import PyKDL
 
 import numpy as np
+from numpy.linalg import inv
 
 from PyKDL import *
 from copy import *
@@ -95,6 +96,37 @@ from sensor_msgs.msg import JointState
 
 from code import InteractiveConsole
 from imp import new_module
+
+import cisstVectorPython
+from cisstVectorPython import vctFrm3
+import cisstRobotPython
+from cisstRobotPython import robManipulator
+
+
+pathTest = "/home/eetuna/catkin_ws/src/eet12-dvrk-ros-wsn/dvrk_needle_planner/tutorial"
+print pathTest
+filePath = pathTest + "/dvpsm.rob"
+print filePath
+
+#filePath = ""
+""" Generate an instance of the robManipulator class """
+""" Load the robot kinematics file by passing the .rob path"""
+psm_manip = robManipulator()
+result = psm_manip.LoadRobot(filePath);
+
+if result:
+	print "Robot Loading is a Failure"
+else:
+	print "Robot Loading is a Success"
+
+""" Initialize the IK output joint vector """
+qvecIK_Test= np.array([0., 0., 0., 0., 0., 0.])
+
+
+frame6to7 = np.matrix([[0.0, -1.0, 0.0, 0.0],
+                     [0.0,  0.0, 1.0, 0.0102],
+                     [-1.0, 0.0, 0.0, 0.0],
+                     [0.0,  0.0, 0.0, 1.0]])
 
 debug_needle_print = bool('')
 
@@ -481,30 +513,56 @@ class needle_planner:
 	    tvec = bvec*nvec
 	    R0 = Rotation(nvec,tvec,bvec)
 	    #R0 = R0.Inverse()
-	    tip_pos = O_needle - r_needle*tvec
+	    tvec_numpy = np.array([tvec.x(), tvec.y(), tvec.z()])
+	    tip_pos_numpy = O_needle - r_needle*tvec_numpy
+	    tip_pos = Vector(tip_pos_numpy[0], tip_pos_numpy[1], tip_pos_numpy[2])
+
 	    self.affine_gripper_frame_wrt_camera_frame_.p = tip_pos
 	    self.affine_gripper_frame_wrt_camera_frame_.M = R0
 	    del gripper_affines_wrt_camera[:]
 	    nsolns = 0
 	    nphi = 0
 	    print "nphi: "
-
-	    for phi in range(0,math.pi,dphi):
+ 
+	    for phi in np.arange(0,math.pi,dphi): #use arange from numpy for double increments
 	        R = self.Rot_k_phi(bvec, phi)*R0
 	        self.affine_gripper_frame_wrt_camera_frame_.M=R
 	        R_Frame = posemath.toMatrix(self.affine_gripper_frame_wrt_camera_frame_)
 	        R_column2_numpy = R_Frame[0:3,1]
 	        R_column2 = Vector(R_column2_numpy[0],R_column2_numpy[1],R_column2_numpy[2])
-	        tip_pos = O_needle - r_needle*R_column2
+	        tip_pos_numpy = O_needle - r_needle*R_column2_numpy
+	        tip_pos = Vector(tip_pos_numpy[0], tip_pos_numpy[1], tip_pos_numpy[2])
+
 	        self.affine_gripper_frame_wrt_camera_frame_.p = tip_pos
-	        des_gripper1_wrt_base = self.default_affine_lcamera_to_psm_one_.Inverse()*self.affine_gripper_frame_wrt_camera_frame_
-	        ''' ERDEM
-	        if (ik_solver_.ik_solve(des_gripper1_wrt_base)) 
-	        {  nsolns++;
-	           cout<<nphi<<",";
-	           #cout<<":  found IK; nsolns = "<<nsolns<<endl;
-	           gripper_affines_wrt_camera.push_back(affine_gripper_frame_wrt_camera_frame_);
-	        }'''
+	        self.affine_gripper_frame_wrt_psm_frame_ = self.default_affine_lcamera_to_psm_one_.Inverse()*self.affine_gripper_frame_wrt_camera_frame_
+	        # ''' ERDEM
+	        # 
+	        affine_gripper_frame_wrt_psm_frame_numpyArray =  posemath.toMatrix(self.affine_gripper_frame_wrt_psm_frame_)
+	        affine_gripper_frame_wrt_psm_frame_numpyMatrix_0to7 = np.matrix(affine_gripper_frame_wrt_psm_frame_numpyArray)
+	        affine_gripper_frame_wrt_psm_frame_numpyMatrix_0to6 = affine_gripper_frame_wrt_psm_frame_numpyMatrix_0to7 * inv(frame6to7)
+	        
+	        print "affine_gripper_frame_wrt_psm_frame_numpyMatrix_0to6", affine_gripper_frame_wrt_psm_frame_numpyMatrix_0to6
+	        affine_0to6 = deepcopy(affine_gripper_frame_wrt_psm_frame_numpyMatrix_0to6)
+	        print "affine_0to6", affine_0to6
+	        qvecIK = deepcopy(qvecIK_Test)
+	        print "qvecIK", qvecIK
+	        result = psm_manip.InverseKinematics(qvecIK, affine_0to6)
+	        if result:
+	        	success = bool('')
+	        else:
+	        	success = True
+	        print "qvecIK after computation", qvecIK
+	        if (success):
+	        	nsolns+=1
+	        	print nphi,","
+	        	gripper_affines_wrt_camera.append(self.affine_gripper_frame_wrt_camera_frame_)
+	        	#gripper_affines_wrt_psm.append(self.affine_gripper_frame_wrt_psm_frame_)
+
+	        # '''
+	        '''
+	        gripper_affines_wrt_camera.append(self.affine_gripper_frame_wrt_camera_frame_)
+	        gripper_affines_wrt_psm.append(self.affine_gripper_frame_wrt_psm_frame_)
+	        '''
 	        nphi += 1
 
 	    print "\n"
@@ -519,7 +577,10 @@ class needle_planner:
 	    tvec = bvec*nvec
 	    R0 = Rotation(nvec,tvec,bvec)
 	    #R0 = R0.Inverse()
-	    tip_pos = O_needle - r_needle*tvec
+	    tvec_numpy = np.array([tvec.x(), tvec.y(), tvec.z()])
+	    tip_pos_numpy = O_needle - r_needle*tvec_numpy
+	    tip_pos = Vector(tip_pos_numpy[0], tip_pos_numpy[1], tip_pos_numpy[2])
+
 	    self.affine_gripper_frame_wrt_camera_frame_.p = tip_pos
 	    self.affine_gripper_frame_wrt_camera_frame_.M = R0
 	    del gripper_affines_wrt_camera[:]
@@ -527,15 +588,43 @@ class needle_planner:
 	    nphi = 0
 	    print "nphi: "
 
-	    for phi in range(0.0,-math.pi,-dphi):
+	    for phi in np.arange(0.0,-math.pi,-dphi): #use arange from numpy for double increments
 	        R = self.Rot_k_phi(bvec, phi)*R0
 	        self.affine_gripper_frame_wrt_camera_frame_.M=R
 	        R_Frame = posemath.toMatrix(self.affine_gripper_frame_wrt_camera_frame_)
 	        R_column2_numpy = R_Frame[0:3,1]
 	        R_column2 = Vector(R_column2_numpy[0],R_column2_numpy[1],R_column2_numpy[2])
-	        tip_pos = O_needle - r_needle*R_column2
+
+	        tip_pos_numpy = O_needle - r_needle*R_column2_numpy
+	        tip_pos = Vector(tip_pos_numpy[0], tip_pos_numpy[1], tip_pos_numpy[2])
+
 	        self.affine_gripper_frame_wrt_camera_frame_.p = tip_pos
-	        des_gripper1_wrt_base = self.default_affine_lcamera_to_psm_two_.Inverse()*self.affine_gripper_frame_wrt_camera_frame_
+	        self.affine_gripper_frame_wrt_psm_frame_ = self.default_affine_lcamera_to_psm_two_.Inverse()*self.affine_gripper_frame_wrt_camera_frame_
+
+
+
+	        affine_gripper_frame_wrt_psm_frame_numpyArray =  posemath.toMatrix(self.affine_gripper_frame_wrt_psm_frame_)
+	        affine_gripper_frame_wrt_psm_frame_numpyMatrix_0to7 = np.matrix(affine_gripper_frame_wrt_psm_frame_numpyArray)
+	        affine_gripper_frame_wrt_psm_frame_numpyMatrix_0to6 = affine_gripper_frame_wrt_psm_frame_numpyMatrix_0to7 * inv(frame6to7)
+	        
+
+	        affine_0to6 = deepcopy(affine_gripper_frame_wrt_psm_frame_numpyMatrix_0to6)
+	        print "affine_0to6", affine_0to6
+	        qvecIK = deepcopy(qvecIK_Test)
+	        print "qvecIK", qvecIK
+
+	        result = psm_manip.InverseKinematics(qvecIK, affine_0to6)
+	        if result:
+	        	success = bool('')
+	        else:
+	        	success = True
+	        if (success):
+	        	nsolns+=1
+	        	print nphi,","
+	        	gripper_affines_wrt_camera.append(self.affine_gripper_frame_wrt_camera_frame_)
+	        	#gripper_affines_wrt_psm.append(self.affine_gripper_frame_wrt_psm_frame_)
+	        
+
 	        ''' ERDEM
 	        if (ik_solver_.ik_solve(des_gripper1_wrt_base)) 
 	        {  nsolns++;

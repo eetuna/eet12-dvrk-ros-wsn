@@ -67,7 +67,16 @@ library to compute gripper poses to perform needle driving
 # and this grasp has needle bvec_needle || +/- bvec_gripper, then the needle tip 
 # tip would also lie along the
  """
+"""
+Important Note on using PyKDL
+PyKDL.Rotation
+__init__(x, y, z)
+Constructor specifying rows of rotation matrix with 3 Vectors
 
+This is WRONG.
+Constructor specifites COLUMNS of rotation matrix NOT ROWS. 
+
+"""
 import rospy
 import threading
 import math
@@ -81,6 +90,7 @@ import math
 #import PyKDL
 
 import numpy as np
+from numpy.linalg import inv
 
 from PyKDL import *
 from copy import *
@@ -95,6 +105,37 @@ from sensor_msgs.msg import JointState
 
 from code import InteractiveConsole
 from imp import new_module
+
+import cisstVectorPython
+from cisstVectorPython import vctFrm3
+import cisstRobotPython
+from cisstRobotPython import robManipulator
+
+
+pathTest = "/home/eetuna/catkin_ws/src/eet12-dvrk-ros-wsn/dvrk_needle_planner/tutorial"
+print pathTest
+filePath = pathTest + "/dvpsm.rob"
+print filePath
+
+#filePath = ""
+""" Generate an instance of the robManipulator class """
+""" Load the robot kinematics file by passing the .rob path"""
+psm_manip = robManipulator()
+result = psm_manip.LoadRobot(filePath);
+
+if result:
+	print "Robot Loading is a Failure"
+else:
+	print "Robot Loading is a Success"
+
+""" Initialize the IK output joint vector """
+qvecIK_Test= np.array([0., 0., 0., 0., 0., 0.])
+
+#dvrk_FK_0to6 = dvrk_FK_Test * inv(frame6to7)
+#tolerance=1e-12
+#Niteration=1000
+#psm_manip.InverseKinematics(qvecIK, dvrk_FK_0to6)
+
 
 debug_needle_print = bool('')
 
@@ -114,9 +155,19 @@ NSAMPS_DRIVE_PLAN = 21 # decide how many samples of grasp poses to compute for n
 DEFAULT_PHI_GRAB = 0.0# M_PI/2.0; #puts tail of needle in middle of gripper--really not feasible
 
 
+frame6to7 = np.matrix([[0.0, -1.0, 0.0, 0.0],
+                     [0.0,  0.0, 1.0, 0.0102],
+                     [-1.0, 0.0, 0.0, 0.0],
+                     [0.0,  0.0, 0.0, 1.0]])
+
+##
+## @brief      Class for needle planner.
+##
 class needle_planner:
 	def __init__(self):
-		"""Constructor.  This initializes a few data members."""
+		"""
+		Constructor.  This initializes a few data members.
+		"""
         # data members, event based
 		#needle properties: these will be constant for a given operation
 		print("needle planner constructor: initializations")
@@ -206,30 +257,102 @@ class needle_planner:
 		self.default_affine_lcamera_to_psm_two_ = Frame()
 
 
+	##
+	## @brief      Sets the needle radius.
+	##
+	## @param      self  The object
+	## @param      r     { parameter_description }
+	##
+	## @return     { description_of_the_return_value }
+	##
 	def set_needle_radius(self, r): #float r
 		self.needle_radius_ = r
 	
+	##
+	## @brief      Sets the needle axis height.
+	##
+	## @param      self  The object
+	## @param      h     { parameter_description }
+	##
+	## @return     { description_of_the_return_value }
+	##
 	def set_needle_axis_ht (self, h): #float h
 		self.needle_axis_ht_ = h
 	
+	##
+	## @brief      Sets the psi needle axis tilt wrt tissue.
+	##
+	## @param      self  The object
+	## @param      tilt  The tilt
+	##
+	## @return     { description_of_the_return_value }
+	##
 	def set_psi_needle_axis_tilt_wrt_tissue(self, tilt):  #float tilt
 		self.psi_needle_axis_tilt_wrt_tissue_ = tilt
 
+	##
+	## @brief      Sets the kvec.
+	##
+	## @param      self  The object
+	## @param      kvec  The kvec
+	##
+	## @return     { description_of_the_return_value }
+	##
 	def set_kvec(self, kvec): #PyKDL.Vector kvec
 		self.kvec_needle_ = kvec
 
+	##
+	## @brief      Sets the needle origin.
+	##
+	## @param      self      The object
+	## @param      O_needle  The o needle
+	##
+	## @return     { description_of_the_return_value }
+	##
 	def set_needle_origin(self, O_needle): #PyKDL.Vector O_needle 
 		self.O_needle_ = O_needle
 
+	##
+	## @brief      Sets the affine grasp frame wrt gripper frame.
+	##
+	## @param      self    The object
+	## @param      affine  The affine
+	##
+	## @return     { description_of_the_return_value }
+	##
 	def set_affine_grasp_frame_wrt_gripper_frame(self, affine): #PyKDL.Frame affine
 		self.affine_grasp_frame_wrt_gripper_frame_ = affine
 
+	##
+	## @brief      Sets the affine needle frame wrt tissue.
+	##
+	## @param      self    The object
+	## @param      affine  The affine
+	##
+	## @return     { description_of_the_return_value }
+	##
 	def set_affine_needle_frame_wrt_tissue(self, affine): #PyKDL.Frame affine
 		self.affine_needle_frame_wrt_tissue_ = affine
 
+	##
+	## @brief      Sets the grasp depth.
+	##
+	## @param      self   The object
+	## @param      depth  The depth
+	##
+	## @return     { description_of_the_return_value }
+	##
 	def set_grasp_depth(self, depth): #float depth
 		self.grasp_depth_ = depth # this far from gripper tip
 
+	##
+	## @brief      Sets the grab needle plus minus y.
+	##
+	## @param      self                 The object
+	## @param      needle_plus_minus_y  The needle plus minus y
+	##
+	## @return     { description_of_the_return_value }
+	##
 	def set_grab_needle_plus_minus_y(self, needle_plus_minus_y):
 		if (GRASP_W_NEEDLE_POSITIVE_GRIPPER_Y == grab_needle_plus_minus_y_):
 			self.grab_needle_plus_minus_y_= needle_plus_minus_y
@@ -238,12 +361,28 @@ class needle_planner:
 		else:
 			rospy_logwarn("grasp status not legal; not being changed")
 
+	##
+	## @brief      { function_description }
+	##
+	## @param      self    The object
+	## @param      affine  The affine
+	##
+	## @return     { description_of_the_return_value }
+	##
 	def print_affine(self, affine):
 		print "Rotation: "
 		print affine.M
 		print "origin: " 
 		print affine.p
 	
+	##
+	## @brief      Sets the grab needle plus minus z.
+	##
+	## @param      self                 The object
+	## @param      needle_plus_minus_z  The needle plus minus z
+	##
+	## @return     { description_of_the_return_value }
+	##
 	def set_grab_needle_plus_minus_z(self, needle_plus_minus_z):
 		if (GRASP_W_NEEDLE_POSITIVE_GRIPPER_Z == grab_needle_plus_minus_z_):
 			self.grab_needle_plus_minus_z_= needle_plus_minus_z
@@ -252,6 +391,13 @@ class needle_planner:
 		else:
 			rospy_logwarn("grasp status needle z-axis sign not legal; not being changed")
 
+	##
+	## @brief      Calculates the grasp transform.
+	##
+	## @param      self  The object
+	##
+	## @return     The grasp transform.
+	##
 	def compute_grasp_transform(self):
 		print("computing grasp transform: ")
 
@@ -281,6 +427,15 @@ class needle_planner:
 	    	#self.print_affine(self.affine_needle_frame_wrt_gripper_frame_)
 	   
 
+	##
+	## @brief      Calculates the grasp transform 2.
+	##
+	## @param      self   The object
+	## @param      phi_x  The phi x
+	## @param      phi_y  The phi y
+	##
+	## @return     The grasp transform 2.
+	##
 	def compute_grasp_transform2(self, phi_x, phi_y):
 
 		Rx = self.Rotx(self.phi_x)
@@ -297,16 +452,50 @@ class needle_planner:
 			self.print_affine(self.affine_needle_frame_wrt_gripper_frame_)
 
 
+	##
+	## @brief      Sets the affine needle frame wrt gripper frame.
+	##
+	## @param      self    The object
+	## @param      affine  The affine
+	##
+	## @return     { description_of_the_return_value }
+	##
 	def set_affine_needle_frame_wrt_gripper_frame(self, affine): #PyKDL.Frame affine
 		self.affine_needle_frame_wrt_gripper_frame_ = affine
 
+	##
+	## @brief      Sets the affine lcamera to psm one.
+	##
+	## @param      self    The object
+	## @param      affine  The affine
+	##
+	## @return     { description_of_the_return_value }
+	##
 	def set_affine_lcamera_to_psm_one(self, affine):#PyKDL.Frame affine
 		self.default_affine_lcamera_to_psm_one_ = affine  
 
+	##
+	## @brief      Sets the affine lcamera to psm two.
+	##
+	## @param      self    The object
+	## @param      affine  The affine
+	##
+	## @return     { description_of_the_return_value }
+	##
 	def set_affine_lcamera_to_psm_two(self, affine):#PyKDL.Frame affine
 		self.default_affine_lcamera_to_psm_two_ = affine
 
 
+	##
+	## @brief      Calculates the tissue frame wrt camera.
+	##
+	## @param      self           The object
+	## @param      entrance_pt    The entrance point
+	## @param      exit_pt        The exit point
+	## @param      tissue_normal  The tissue normal
+	##
+	## @return     The tissue frame wrt camera.
+	##
 	def compute_tissue_frame_wrt_camera(self, entrance_pt, exit_pt, tissue_normal):
 		self.bvec_tissue_frame_wrt_camera_ = tissue_normal
 		self.nvec_tissue_frame_wrt_camera_ = (exit_pt - entrance_pt)
@@ -334,6 +523,15 @@ class needle_planner:
 			self.print_affine(self.affine_tissue_frame_wrt_camera_frame_)
 
 
+	##
+	## @brief      Calculates the needle drive gripper affines.
+	##
+	## @param      self                        The object
+	## @param      gripper_affines_wrt_camera  The gripper affines wrt camera
+	## @param      gripper_affines_wrt_psm     The gripper affines wrt psm
+	##
+	## @return     The needle drive gripper affines.
+	##
 	def compute_needle_drive_gripper_affines(self, gripper_affines_wrt_camera, gripper_affines_wrt_psm):
 	    
 	    phi_insertion_ = 0.0
@@ -433,6 +631,14 @@ class needle_planner:
 
 	    
 
+	##
+	## @brief      { function_description }
+	##
+	## @param      self             The object
+	## @param      gripper_affines  The gripper affines
+	##
+	## @return     { description_of_the_return_value }
+	##
 	def simple_compute_needle_drive_gripper_affines(self, gripper_affines):
 	    phi_insertion_ = 0.0
 
@@ -477,6 +683,18 @@ class needle_planner:
 
 
 
+	##
+	## @brief      { function_description }
+	##
+	## @param      self                        The object
+	## @param      O_needle                    The o needle
+	## @param      r_needle                    The r needle
+	## @param      kvec_yaw                    The kvec yaw
+	## @param      gripper_affines_wrt_camera  The gripper affines wrt camera
+	## @param      gripper_affines_wrt_psm     The gripper affines wrt psm
+	##
+	## @return     { description_of_the_return_value }
+	##
 	def simple_horiz_kvec_motion(self, O_needle, r_needle, kvec_yaw, gripper_affines_wrt_camera, gripper_affines_wrt_psm):
 	    dphi = math.pi/40.0
 	    bvec0 = Vector(1,0,0)
@@ -485,7 +703,10 @@ class needle_planner:
 	    tvec = bvec*nvec
 	    R0 = Rotation(nvec,tvec,bvec)
 	    #R0 = R0.Inverse()
-	    tip_pos = O_needle - r_needle*tvec
+	    tvec_numpy = np.array([tvec.x(), tvec.y(), tvec.z()])
+	    tip_pos_numpy = O_needle - r_needle*tvec_numpy
+	    tip_pos = Vector(tip_pos_numpy[0], tip_pos_numpy[1], tip_pos_numpy[2])
+
 	    self.affine_gripper_frame_wrt_camera_frame_.p = tip_pos
 	    self.affine_gripper_frame_wrt_camera_frame_.M = R0
 	    del gripper_affines_wrt_camera[:]
@@ -494,30 +715,60 @@ class needle_planner:
 	    nphi = 0
 	    print "nphi: "
 
-	    for phi in range(0,math.pi,dphi):
+	    for phi in np.arange(0,math.pi,dphi):
 	        R = self.Rot_k_phi(bvec, phi)*R0
 	        self.affine_gripper_frame_wrt_camera_frame_.M=R
 	        R_Frame = posemath.toMatrix(self.affine_gripper_frame_wrt_camera_frame_)
 	        R_column2_numpy = R_Frame[0:3,1]
 	        R_column2 = Vector(R_column2_numpy[0],R_column2_numpy[1],R_column2_numpy[2])
-	        tip_pos = O_needle - r_needle*R_column2
+	        tip_pos_numpy = O_needle - r_needle*R_column2_numpy
+	        tip_pos = Vector(tip_pos_numpy[0], tip_pos_numpy[1], tip_pos_numpy[2])
 	        self.affine_gripper_frame_wrt_camera_frame_.p = tip_pos
 	        self.affine_gripper_frame_wrt_psm_frame_ = self.default_affine_lcamera_to_psm_one_.Inverse()*self.affine_gripper_frame_wrt_camera_frame_
-	        ''' ERDEM
-	        if (ik_solver_.ik_solve(des_gripper1_wrt_base)) 
-	        {  nsolns++;
-	           cout<<nphi<<",";
-	           #cout<<":  found IK; nsolns = "<<nsolns<<endl;
-	           gripper_affines_wrt_camera.push_back(affine_gripper_frame_wrt_camera_frame_);
-	        }'''
+	        # ''' ERDEM
+	        affine_gripper_frame_wrt_psm_frame_numpyArray =  posemath.toMatrix(self.affine_gripper_frame_wrt_psm_frame_)
+	        affine_gripper_frame_wrt_psm_frame_numpyMatrix_0to7 = np.matrix(affine_gripper_frame_wrt_psm_frame_numpyArray)
+	        affine_gripper_frame_wrt_psm_frame_numpyMatrix_0to6 = affine_gripper_frame_wrt_psm_frame_numpyMatrix_0to7 * inv(frame6to7)
+	        
+	        print "affine_gripper_frame_wrt_psm_frame_numpyMatrix_0to6", affine_gripper_frame_wrt_psm_frame_numpyMatrix_0to6
+	        affine_0to6 = deepcopy(affine_gripper_frame_wrt_psm_frame_numpyMatrix_0to6)
+	        print "affine_0to6", affine_0to6
+	        qvecIK = deepcopy(qvecIK_Test)
+	        print "qvecIK", qvecIK
+	        result = psm_manip.InverseKinematics(qvecIK, affine_0to6)
+	        if result:
+	        	success = bool('')
+	        else:
+	        	success = True
+	        print "qvecIK after computation", qvecIK
+	        if (success):
+	        	nsolns+=1
+	        	print nphi,","
+	        	gripper_affines_wrt_camera.append(self.affine_gripper_frame_wrt_camera_frame_)
+	        	gripper_affines_wrt_psm.append(self.affine_gripper_frame_wrt_psm_frame_)
+
+	        # '''
+	        '''
 	        gripper_affines_wrt_camera.append(self.affine_gripper_frame_wrt_camera_frame_)
 	        gripper_affines_wrt_psm.append(self.affine_gripper_frame_wrt_psm_frame_)
+	        '''
 	        nphi += 1
 
 	    print "\n"
 	        
 
 
+	##
+	## @brief      { function_description }
+	##
+	## @param      self                        The object
+	## @param      O_needle                    The o needle
+	## @param      r_needle                    The r needle
+	## @param      kvec_yaw                    The kvec yaw
+	## @param      gripper_affines_wrt_camera  The gripper affines wrt camera
+	##
+	## @return     { description_of_the_return_value }
+	##
 	def simple_horiz_kvec_motion_psm2(self, O_needle, r_needle, kvec_yaw, gripper_affines_wrt_camera):
 	    dphi = math.pi/40.0
 	    bvec0 = Vector(1,0,0)
@@ -526,7 +777,10 @@ class needle_planner:
 	    tvec = bvec*nvec
 	    R0 = Rotation(nvec,tvec,bvec)
 	    #R0 = R0.Inverse()
-	    tip_pos = O_needle - r_needle*tvec
+	    tvec_numpy = np.array([tvec.x(), tvec.y(), tvec.z()])
+	    tip_pos_numpy = O_needle - r_needle*tvec_numpy
+	    tip_pos = Vector(tip_pos_numpy[0], tip_pos_numpy[1], tip_pos_numpy[2])
+
 	    self.affine_gripper_frame_wrt_camera_frame_.p = tip_pos
 	    self.affine_gripper_frame_wrt_camera_frame_.M = R0
 	    del gripper_affines_wrt_camera[:]
@@ -535,34 +789,88 @@ class needle_planner:
 	    nphi = 0
 	    print "nphi: "
 
-	    for phi in range(0.0,-math.pi,-dphi):
+	    for phi in np.arange(0.0,-math.pi,-dphi):
 	        R = self.Rot_k_phi(bvec, phi)*R0
 	        self.affine_gripper_frame_wrt_camera_frame_.M=R
 	        R_Frame = posemath.toMatrix(self.affine_gripper_frame_wrt_camera_frame_)
 	        R_column2_numpy = R_Frame[0:3,1]
 	        R_column2 = Vector(R_column2_numpy[0],R_column2_numpy[1],R_column2_numpy[2])
-	        tip_pos = O_needle - r_needle*R_column2
+	        tip_pos_numpy = O_needle - r_needle*R_column2_numpy
+	        tip_pos = Vector(tip_pos_numpy[0], tip_pos_numpy[1], tip_pos_numpy[2])
 	        self.affine_gripper_frame_wrt_camera_frame_.p = tip_pos
 	        self.affine_gripper_frame_wrt_psm_frame_ = self.default_affine_lcamera_to_psm_two_.Inverse()*self.affine_gripper_frame_wrt_camera_frame_
-	        ''' ERDEM
+
+
+	        affine_gripper_frame_wrt_psm_frame_numpyArray =  posemath.toMatrix(self.affine_gripper_frame_wrt_psm_frame_)
+	        affine_gripper_frame_wrt_psm_frame_numpyMatrix_0to7 = np.matrix(affine_gripper_frame_wrt_psm_frame_numpyArray)
+	        affine_gripper_frame_wrt_psm_frame_numpyMatrix_0to6 = affine_gripper_frame_wrt_psm_frame_numpyMatrix_0to7 * inv(frame6to7)
+	        
+
+	        affine_0to6 = deepcopy(affine_gripper_frame_wrt_psm_frame_numpyMatrix_0to6)
+	        print "affine_0to6", affine_0to6
+	        qvecIK = deepcopy(qvecIK_Test)
+	        print "qvecIK", qvecIK
+
+	        result = psm_manip.InverseKinematics(qvecIK, affine_0to6)
+	        if result:
+	        	success = bool('')
+	        else:
+	        	success = True
+	        if (success):
+	        	nsolns+=1
+	        	print nphi,","
+	        	gripper_affines_wrt_camera.append(self.affine_gripper_frame_wrt_camera_frame_)
+	        	gripper_affines_wrt_psm.append(self.affine_gripper_frame_wrt_psm_frame_)
+	        
+			#ERDEM
+	        '''
 	        if (ik_solver_.ik_solve(des_gripper1_wrt_base)) 
 	        {  nsolns++;
 	           cout<<nphi<<",";
 	           #cout<<":  found IK; nsolns = "<<nsolns<<endl;
 	           gripper_affines_wrt_camera.push_back(affine_gripper_frame_wrt_camera_frame_);
-	        }'''
+	        }
 	        gripper_affines_wrt_camera.append(self.affine_gripper_frame_wrt_camera_frame_)
-	        gripper_affines_wrt_psm.append(self.affine_gripper_frame_wrt_psm_frame_)
+	        gripper_affines_wrt_psm.append(self.affine_gripper_frame_wrt_psm_frame_)'''
 	        nphi += 1
 
 	    print "\n"
 
+	##
+	## @brief      { function_description }
+	##
+	## @param      self                        The object
+	## @param      x                           { parameter_description }
+	## @param      y                           { parameter_description }
+	## @param      z                           { parameter_description }
+	## @param      r                           { parameter_description }
+	## @param      gripper_affines_wrt_camera  The gripper affines wrt camera
+	## @param      gripper_affines_wrt_psm     The gripper affines wrt psm
+	##
+	## @return     { description_of_the_return_value }
+	##
 	def simple_test_gripper_motion(self, x, y, z, r, gripper_affines_wrt_camera, gripper_affines_wrt_psm):
 		print "\n"
 
+	##
+	## @brief      { function_description }
+	##
+	## @param      self  The object
+	## @param      phi   The phi
+	##
+	## @return     { description_of_the_return_value }
+	##
 	def vers(self, phi):
 		return (1.0-math.cos(phi)) 
 
+	##
+	## @brief      { function_description }
+	##
+	## @param      self  The object
+	## @param      phi   The phi
+	##
+	## @return     { description_of_the_return_value }
+	##
 	def Rotx(self, phi):
 	    #Rx_nrow = Vector(1.0, 0.0, 0.0)
 	    #Rx_trow = Vector(0.0, math.cos(phi), -math.sin(phi))
@@ -576,6 +884,14 @@ class needle_planner:
 
 	    return Rx
 
+	##
+	## @brief      { function_description }
+	##
+	## @param      self  The object
+	## @param      phi   The phi
+	##
+	## @return     { description_of_the_return_value }
+	##
 	def Roty(self, phi):
 		#Ry_nrow = Vector(math.cos(phi), 0.0, math.sin(phi))
 		#Ry_trow = Vector(0.0, 1, 0.0)
@@ -590,6 +906,14 @@ class needle_planner:
 
 		return Ry
 
+	##
+	## @brief      { function_description }
+	##
+	## @param      self  The object
+	## @param      phi   The phi
+	##
+	## @return     { description_of_the_return_value }
+	##
 	def Rotz(self, phi):
 		#Rz_nrow = Vector(math.cos(phi), -math.sin(phi), 0.0)
 		#Rz_trow = Vector(math.sin(phi), math.cos(phi), 0.0)
@@ -604,6 +928,15 @@ class needle_planner:
 
 		return Rz
 
+	##
+	## @brief      { function_description }
+	##
+	## @param      self   The object
+	## @param      k_vec  The k vector
+	## @param      phi    The phi
+	##
+	## @return     { description_of_the_return_value }
+	##
 	def Rot_k_phi(self, k_vec, phi): #Eigen::Vector3d k_vec,float phi
 	    #Eigen::Matrix3d R_k_phi;
 	    kx = k_vec[0]
@@ -675,6 +1008,15 @@ class needle_planner:
 
 	    return R_k_phi_square
 
+	##
+	## @brief      Writes a needle drive affines to file.
+	##
+	## @param      self                        The object
+	## @param      gripper_affines_wrt_camera  The gripper affines wrt camera
+	## @param      gripper_affines_wrt_psm     The gripper affines wrt psm
+	##
+	## @return     { description_of_the_return_value }
+	##
 	def write_needle_drive_affines_to_file(self, gripper_affines_wrt_camera, gripper_affines_wrt_psm):
 
 		nposes = len(gripper_affines_wrt_camera)
@@ -789,6 +1131,15 @@ class needle_planner:
 		rospy.loginfo("wrote gripper motion plan to file gripper_poses_in_psm_coords.csp")
 
 
+ 	##
+ 	## @brief      Writes a psm 2 needle drive affines to file
+ 	##
+ 	## @param      self                             The object
+ 	## @param      psm2_gripper_affines_wrt_camera  The psm 2 gripper affines wrt camera
+ 	## @param      psm1_gripper_affines_wrt_camera  The psm 1 gripper affines wrt camera
+ 	##
+ 	## @return     { description_of_the_return_value }
+ 	##
  	def write_psm2_needle_drive_affines_to_file(self, psm2_gripper_affines_wrt_camera, psm1_gripper_affines_wrt_camera):
 
 

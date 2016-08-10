@@ -3,16 +3,10 @@ Documentation for this test file
 
 More details:
 
-
 This file tests the cisst python wrappers for cisstVector and cisstRobot classes.
 
-
-First in order to use cisstRobot adn cisstVector python wrappers, you need to expoert PYTHONPATH to .bashrc
-export PYTHONPATH=$PYTHONPATH:~/catkin_ws/src/cisst-saw/cisst/cisstRobot/
-export PYTHONPATH=$PYTHONPATH:~/catkin_ws/build_release/cisst/lib/
-
 It generates an instance of vctFrm3, assigns its rotation and translation counterparts
-It loads the dvrk psm kinematics, which is defined as a .rob file. It gets the file path and pas sthi string.
+It loads the dvrk psm kinematics, which is defined as a .rob file. It gets the file path and pass thi string.
 Creates an instance of a robManipulator
 Defines the transformation from dvrk 6th frame to gripper frame
 Tests the FK for a predefined set of joint values: T_6/0 = FK(qvec)
@@ -24,8 +18,6 @@ Compare qvec_IK with the original qvec and find the error: qerr = qvec - qvec_IK
 Set the precision of np.array and np.matrix by np.set_printoptions. Suppress the scientific, i.e. e+00, notation
 Calculate the BodyJacobian and pass the computed value to a matrix Jmat. A 6x6 matrix should be passed to function
 
-If you are using numpy for matrices and arrays, use matrices for 2D operations.
-For matrix multiplication np.array do element wise multiplication, NOT desired.
 """
 
 
@@ -47,10 +39,7 @@ from needle_planner import *
 
 """ get the path of the kinematics .rob file """
 pathTest = os.path.abspath(os.path.dirname(__file__))
-print pathTest
-#pathTest = "/home/eetuna/catkin_ws/src/eet12-dvrk-ros-wsn/dvrk_needle_planner/tutorial"
-#print pathTest
-filePath = pathTest + "/dvpsm.rob"
+filePath = pathTest + '/dvpsm.rob'
 print filePath
 
 """ Generate an instance of the robManipulator class """
@@ -137,8 +126,6 @@ dvrk_FK_0to6 = dvrk_FK_Test * inv(frame6to7)
 tolerance=1e-12
 Niteration=1000
 psm_manip.InverseKinematics(qvecIK, dvrk_FK_0to6)
-print "Test"
-print psm_manip.InverseKinematics(qvecIK, dvrk_FK_0to6)
 qErr = (qvec - qvecIK)
 
 """ print the gripper and 6th frame w.r.t to base """
@@ -159,7 +146,9 @@ Jarray = np.zeros((6, 6))
 Jmat = np.matrix(Jarray)
 #qTest = qvec[0:-1]
 #print qTest
-TestJacobian = psm_manip.JacobianBody(qvec, Jmat)    
-print "\n Test Jacobian Computation\n"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+TestJacobian = psm_manip.JacobianBody(qvec, Jmat)
+
+""" print the computed Jacobian matrix """
+print "\n                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 Jacobian Computation \n"
 print "Jacobian bool result: ", TestJacobian
 print "Jacobian matrix \n", Jmat

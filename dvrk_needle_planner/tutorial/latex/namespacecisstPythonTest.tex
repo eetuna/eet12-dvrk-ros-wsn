@@ -1,0 +1,118 @@
+\hypertarget{namespacecisstPythonTest}{}\section{cisst\+Python\+Test Namespace Reference}
+\label{namespacecisstPythonTest}\index{cisst\+Python\+Test@{cisst\+Python\+Test}}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+{\bfseries path\+Test} = os.\+path.\+abspath(os.\+path.\+dirname(\+\_\+\+\_\+file\+\_\+\+\_\+))\hypertarget{namespacecisstPythonTest_a428d6694587c818cb50cf0e289f322be}{}\label{namespacecisstPythonTest_a428d6694587c818cb50cf0e289f322be}
+
+\item 
+string {\bfseries file\+Path} = path\+Test+\textquotesingle{}/dvpsm.\+rob\textquotesingle{}\hypertarget{namespacecisstPythonTest_a46990aa1a6d15c1f6e45a1264ac2043f}{}\label{namespacecisstPythonTest_a46990aa1a6d15c1f6e45a1264ac2043f}
+
+\item 
+{\bfseries psm\+\_\+manip} = rob\+Manipulator()\hypertarget{namespacecisstPythonTest_a54dcfe6fb21415cb239da2e40debbf18}{}\label{namespacecisstPythonTest_a54dcfe6fb21415cb239da2e40debbf18}
+
+\item 
+{\bfseries result} = psm\+\_\+manip.\+Load\+Robot(file\+Path);\hypertarget{namespacecisstPythonTest_a9ed51a3d903c561b3eb3160564821d5f}{}\label{namespacecisstPythonTest_a9ed51a3d903c561b3eb3160564821d5f}
+
+\item 
+{\bfseries frame} = vct\+Frm3()\hypertarget{namespacecisstPythonTest_a567cdb956141fb3c61a42f501fa4f999}{}\label{namespacecisstPythonTest_a567cdb956141fb3c61a42f501fa4f999}
+
+\item 
+{\bfseries inverse\+Frame} = vct\+Frm3()\hypertarget{namespacecisstPythonTest_a8bbb7abe7ba4ae1ba68df48b1106df4a}{}\label{namespacecisstPythonTest_a8bbb7abe7ba4ae1ba68df48b1106df4a}
+
+\item 
+{\bfseries rotation} = frame.\+Rotation()\hypertarget{namespacecisstPythonTest_abc25679cc1285ffb8fae1517fa7eb904}{}\label{namespacecisstPythonTest_abc25679cc1285ffb8fae1517fa7eb904}
+
+\item 
+{\bfseries translation} = frame.\+Translation()\hypertarget{namespacecisstPythonTest_a2983c672448be24ed872afdd9f34185c}{}\label{namespacecisstPythonTest_a2983c672448be24ed872afdd9f34185c}
+
+\item 
+{\bfseries precision}\hypertarget{namespacecisstPythonTest_a464d1e7e9c9a4bcb74f6d7212f4e5d20}{}\label{namespacecisstPythonTest_a464d1e7e9c9a4bcb74f6d7212f4e5d20}
+
+\item 
+{\bfseries suppress}\hypertarget{namespacecisstPythonTest_a28565b4fda2d9a7c95fab86bbeed4ba7}{}\label{namespacecisstPythonTest_a28565b4fda2d9a7c95fab86bbeed4ba7}
+
+\item 
+{\bfseries frame6to7}
+\item 
+{\bfseries qvec} = np.\+zeros(7)\hypertarget{namespacecisstPythonTest_a26dd2bc036fe66656f5a36908390ab73}{}\label{namespacecisstPythonTest_a26dd2bc036fe66656f5a36908390ab73}
+
+\item 
+{\bfseries dvrk\+\_\+\+F\+K\+\_\+0to6\+\_\+array} = psm\+\_\+manip.\+Forward\+Kinematics(qvec)\hypertarget{namespacecisstPythonTest_a70be031122b8bcbb50b0aede95cc1bf6}{}\label{namespacecisstPythonTest_a70be031122b8bcbb50b0aede95cc1bf6}
+
+\item 
+{\bfseries dvrk\+\_\+\+F\+K\+\_\+0to6} = np.\+matrix(dvrk\+\_\+\+F\+K\+\_\+0to6\+\_\+array)\hypertarget{namespacecisstPythonTest_a9f1e567c5c400f4bccd891b3dc536193}{}\label{namespacecisstPythonTest_a9f1e567c5c400f4bccd891b3dc536193}
+
+\item 
+{\bfseries dvrk\+\_\+\+F\+K\+\_\+\+Test} = dvrk\+\_\+\+F\+K\+\_\+0to6$\ast$frame6to7\hypertarget{namespacecisstPythonTest_aa7da43fe6d350f83a2f6bcdd9074316d}{}\label{namespacecisstPythonTest_aa7da43fe6d350f83a2f6bcdd9074316d}
+
+\item 
+{\bfseries qvec\+IK} = np.\+array(\mbox{[}0., 0., 0., 0., 0., 0.\mbox{]})\hypertarget{namespacecisstPythonTest_a320300c613d757afbe8ef357d1a0acd8}{}\label{namespacecisstPythonTest_a320300c613d757afbe8ef357d1a0acd8}
+
+\item 
+{\bfseries pose\+Given\+Test}
+\item 
+int {\bfseries tolerance} = 1\hypertarget{namespacecisstPythonTest_a496b82e37ced773d99480e4b5c28e2d5}{}\label{namespacecisstPythonTest_a496b82e37ced773d99480e4b5c28e2d5}
+
+\item 
+int {\bfseries Niteration} = 1000\hypertarget{namespacecisstPythonTest_ad15bca3c4e68e2732eafdb645d87522f}{}\label{namespacecisstPythonTest_ad15bca3c4e68e2732eafdb645d87522f}
+
+\item 
+tuple {\bfseries q\+Err} = (qvec -\/ qvec\+IK)\hypertarget{namespacecisstPythonTest_a1fb19480b440c07e9e3ee948701d1ee3}{}\label{namespacecisstPythonTest_a1fb19480b440c07e9e3ee948701d1ee3}
+
+\item 
+{\bfseries Jarray} = np.\+zeros((6, 6))\hypertarget{namespacecisstPythonTest_a1fcf7802f505257db56e8bf070847848}{}\label{namespacecisstPythonTest_a1fcf7802f505257db56e8bf070847848}
+
+\item 
+{\bfseries Jmat} = np.\+matrix(Jarray)\hypertarget{namespacecisstPythonTest_a7f36aa8181a55a80ea1660f3f7585d35}{}\label{namespacecisstPythonTest_a7f36aa8181a55a80ea1660f3f7585d35}
+
+\item 
+{\bfseries Test\+Jacobian} = psm\+\_\+manip.\+Jacobian\+Body(qvec, Jmat)\hypertarget{namespacecisstPythonTest_a3088e2ac3d5a126106f751c351e8a4f9}{}\label{namespacecisstPythonTest_a3088e2ac3d5a126106f751c351e8a4f9}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}@package docstring
+Documentation for this test file
+
+More details:
+
+This file tests the cisst python wrappers for cisstVector and cisstRobot classes.
+
+It generates an instance of vctFrm3, assigns its rotation and translation counterparts
+It loads the dvrk psm kinematics, which is defined as a .rob file. It gets the file path and pass thi string.
+Creates an instance of a robManipulator
+Defines the transformation from dvrk 6th frame to gripper frame
+Tests the FK for a predefined set of joint values: T_6/0 = FK(qvec)
+Do not append the gripper jaw joint. Only include the first 6 joint as the FK and IK of cisstRobot class based on 6 joints
+To get the end effector, first find the pose of the 6th frame w.r.t base from FK. Then multiply this pose with the transformation of T_6/0 * T_7/6 = T_7/0
+From the computed pose T_7/0 get the T_6/0 by T_6/0 = T_7/0*inv(T_6/7)
+The compute the joint angles by IK(T_6/0) = qvec_IK
+Compare qvec_IK with the original qvec and find the error: qerr = qvec - qvec_IK
+Set the precision of np.array and np.matrix by np.set_printoptions. Suppress the scientific, i.e. e+00, notation
+Calculate the BodyJacobian and pass the computed value to a matrix Jmat. A 6x6 matrix should be passed to function\end{DoxyVerb}
+ 
+
+\subsection{Variable Documentation}
+\index{cisst\+Python\+Test@{cisst\+Python\+Test}!frame6to7@{frame6to7}}
+\index{frame6to7@{frame6to7}!cisst\+Python\+Test@{cisst\+Python\+Test}}
+\subsubsection[{\texorpdfstring{frame6to7}{frame6to7}}]{\setlength{\rightskip}{0pt plus 5cm}cisst\+Python\+Test.\+frame6to7}\hypertarget{namespacecisstPythonTest_adf2b9d1b5679e4c1f85c8f699ada427d}{}\label{namespacecisstPythonTest_adf2b9d1b5679e4c1f85c8f699ada427d}
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+1 = np.matrix([[0.0, -1.0, 0.0, 0.0],
+2                      [0.0,  0.0, 1.0, 0.0102],
+3                      [-1.0, 0.0, 0.0, 0.0],
+4                      [0.0,  0.0, 0.0, 1.0]])
+\end{DoxyCode}
+\index{cisst\+Python\+Test@{cisst\+Python\+Test}!pose\+Given\+Test@{pose\+Given\+Test}}
+\index{pose\+Given\+Test@{pose\+Given\+Test}!cisst\+Python\+Test@{cisst\+Python\+Test}}
+\subsubsection[{\texorpdfstring{pose\+Given\+Test}{poseGivenTest}}]{\setlength{\rightskip}{0pt plus 5cm}cisst\+Python\+Test.\+pose\+Given\+Test}\hypertarget{namespacecisstPythonTest_a8494e337fca5647d94e7e403d9685ee1}{}\label{namespacecisstPythonTest_a8494e337fca5647d94e7e403d9685ee1}
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+1 = np.matrix([
+2     [-0.2265,    0.4496,    0.8641,   -0.0097],
+3     [0.6337,    0.7417,   -0.2198,    0.0166],
+4     [-0.7397,    0.4978,   -0.4529,   -0.0888],
+5          [0,         0,         0,    1.0000]])
+\end{DoxyCode}
