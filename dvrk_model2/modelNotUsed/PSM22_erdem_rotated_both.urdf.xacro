@@ -2,12 +2,13 @@
 <robot name="dvrk_psm" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
   <!-- Macros -->
-  <xacro:include filename="$(find dvrk_model2)/model/psm_erdem_rotated.urdf.xacro"/>
+  <xacro:include filename="$(find dvrk_model2)/model/psm_erdem_rotated_both_org.urdf.xacro"/>
   <!--<xacro:include filename="$(find dvrk_model)/model/wsn_psm.urdf.xacro"/>-->
 
   <link name="world">
       <origin xyz="0.0 0.0 0.0"/>  
   </link>
+  
 
   <joint name="world_joint" type="fixed">
       <parent link="world"/>
@@ -78,9 +79,25 @@
   <!--origin rpy="0.0 0.0 0.0" xyz="0.0 0.2 0.8"/-->
   </link>
 
+<!--
   <xacro:psm_sca 
       prefix="one_"
       parent_link="camera"
-      xyz="-0.25 0.0 0.5" rpy="0.0 0.0 3.1415926"/>
+      xyz="-0.02 0.05 0.5" rpy="0.0 0.0 3.927"/>-->
 
+       <!--xyz="-0.02 0.05 0.5" rpy="0.0 0.0 3.927"/>-->
+       <!--xyz="-0.25 0.0 0.5" rpy="0.0 0.0 3.1415926"/>-->
+        <!--xyz="-0.40 0.0 0.5" rpy="0.0 0.0 -.78"/>-->
+
+ <!-- <xacro:psm_sca 
+      prefix="two_"
+      parent_link="camera"
+      xyz="0.02 0.05 0.5" rpy="0.0 0.0 2.356"/>-->
+
+
+
+  <xacro:psm_sca 
+      prefix="two_"
+      parent_link="camera"
+      xyz="0.15 0.05 0.5" rpy="0.0 0.0 3.1415926"/>
 </robot>

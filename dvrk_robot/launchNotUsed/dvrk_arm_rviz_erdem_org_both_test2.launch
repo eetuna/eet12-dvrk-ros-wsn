@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>
+  <!-- fakecam rviz -->
+
+
+  <arg name="arm1" />
+  <arg name="arm2" />      
+  <arg name="config" />   
+
+  
+  <node name="dvrk_$(arg arm1)_$(arg arm2)_node"
+        pkg="dvrk_robot"
+        type="dvrk_console_json"        
+        args="-j $(arg config)"                     
+        output="screen"/>
+
+  <group ns="/dvrk/$(arg arm1)_$(arg arm2)">
+      <arg name="gui" default="false" />
+      <arg name="rate" default="20" />
+      
+      <param name="robot_description" command="$(find xacro)/xacro.py '$(find dvrk_model2)/model/PSM1_erdem_rotated_both.urdf.xacro'" />
+      <param name="use_gui" value="$(arg gui)"/>
+      <param name="rate" value="$(arg rate)"/>
+      
+      <rosparam param="source_list" subst_value="True">
+        [/dvrk/$(arg arm1)_$(arg arm2)/state_joint_current]
+      </rosparam>
+
+      <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+      <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
+  </group>
+
+
+
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find dvrk_model2)/rviz_config/davinci_both.rviz" />
+
+
+
+  <!-- psm one -->
+  <include file="$(find autocamera)/launch/psm_one_rviz.launch">
+    <arg name="model" default="$(find autocamera)/model/psm_one.urdf.xacro"/>
+    <arg name="rate" default="200" />
+    <arg name="rviz" value="false"/>
+    <arg name="ns" default="/dvrk_psm1"/>
+  </include>
+
+  <!-- psm two -->
+  <include file="$(find autocamera)/launch/psm_one_rviz.launch">
+    <arg name="model" default="$(find autocamera)/model/psm_two.urdf.xacro"/>
+    <arg name="rate" default="200" />
+    <arg name="rviz" value="false"/>
+    <arg name="ns" default="/dvrk_psm2"/>
+  </include>
