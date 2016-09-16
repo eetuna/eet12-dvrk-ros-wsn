@@ -3,7 +3,7 @@ from distutils.core import setup
 from catkin_pkg.python_setup import generate_distutils_setup
 
 # fetch values from package.xml
-setup_args = generate_distutils_setup(packages=['dvrk_needle_planner'],
+setup_args = generate_distutils_setup(packages=['dvrk_traj_streamer'],
                                       package_dir={'': 'src'},
                                       )
 

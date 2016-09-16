@@ -661,6 +661,8 @@ class robot:
             # go to that position directly
             joint_state = JointState()
             joint_state.position[:] = end_joint
+            print 55
+            print joint_state
             self.set_position_joint_publisher.publish(joint_state)
             rospy.loginfo(rospy.get_caller_id() + ' <- completing move joint direct')
             return True

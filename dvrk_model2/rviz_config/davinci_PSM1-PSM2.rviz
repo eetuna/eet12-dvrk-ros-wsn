@@ -6,7 +6,6 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
-        - /Grid1
         - /RobotModel1
         - /RobotModel2
       Splitter Ratio: 0.5
@@ -61,208 +60,85 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
-        camera:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        davinci_endo:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        left_camera_link:
+        PSM1_outer_insertion_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        one_fingertip1:
+        PSM1_outer_pitch_back_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        one_fingertip2:
+        PSM1_outer_pitch_bottom_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        one_needle_link1:
+        PSM1_outer_pitch_front_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        one_outer_insertion_link:
+        PSM1_outer_pitch_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        PSM1_outer_pitch_top_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        one_outer_pitch_back_link:
+        PSM1_outer_yaw_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        one_outer_pitch_bottom_link:
+        PSM1_psm_base_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        one_outer_pitch_front_link:
+        PSM1_tool_main_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        one_outer_pitch_link:
+        PSM1_tool_tip_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        one_outer_pitch_top_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        one_outer_yaw_link:
+        PSM1_tool_wrist_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        one_psm_base_link:
+        PSM1_tool_wrist_sca_ee_link_0:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        one_tool_main_link:
+        PSM1_tool_wrist_sca_ee_link_1:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        one_tool_tip_link:
+        PSM1_tool_wrist_sca_ee_link_2:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        one_tool_wrist_link:
+        PSM1_tool_wrist_sca_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        one_tool_wrist_sca_ee_link_1:
+        PSM1_tool_wrist_sca_shaft_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        one_tool_wrist_sca_ee_link_2:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        one_tool_wrist_sca_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        one_tool_wrist_sca_shaft_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        one_tool_wrist_shaft_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        right_camera_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        two_fingertip1:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        two_fingertip2:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        two_needle_link1:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        two_outer_insertion_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        two_outer_pitch_back_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        two_outer_pitch_bottom_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        two_outer_pitch_front_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        two_outer_pitch_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        two_outer_pitch_top_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        two_outer_yaw_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        two_psm_base_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        two_tool_main_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        two_tool_tip_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        two_tool_wrist_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        two_tool_wrist_sca_ee_link_1:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        two_tool_wrist_sca_ee_link_2:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        two_tool_wrist_sca_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        two_tool_wrist_sca_shaft_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        two_tool_wrist_shaft_link:
+        PSM1_tool_wrist_shaft_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -272,7 +148,7 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
       Name: RobotModel
-      Robot Description: /dvrk/PSM1/robot_description
+      Robot Description: dvrk/PSM1/robot_description
       TF Prefix: ""
       Update Interval: 0
       Value: true
@@ -287,208 +163,85 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
-        camera:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        davinci_endo:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        left_camera_link:
+        PSM2_outer_insertion_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        one_fingertip1:
+        PSM2_outer_pitch_back_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        one_fingertip2:
+        PSM2_outer_pitch_bottom_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        one_needle_link1:
+        PSM2_outer_pitch_front_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        one_outer_insertion_link:
+        PSM2_outer_pitch_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        PSM2_outer_pitch_top_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        one_outer_pitch_back_link:
+        PSM2_outer_yaw_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        one_outer_pitch_bottom_link:
+        PSM2_psm_base_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        one_outer_pitch_front_link:
+        PSM2_tool_main_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        one_outer_pitch_link:
+        PSM2_tool_tip_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        one_outer_pitch_top_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        one_outer_yaw_link:
+        PSM2_tool_wrist_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        one_psm_base_link:
+        PSM2_tool_wrist_sca_ee_link_0:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        one_tool_main_link:
+        PSM2_tool_wrist_sca_ee_link_1:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        one_tool_tip_link:
+        PSM2_tool_wrist_sca_ee_link_2:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        one_tool_wrist_link:
+        PSM2_tool_wrist_sca_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        one_tool_wrist_sca_ee_link_1:
+        PSM2_tool_wrist_sca_shaft_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        one_tool_wrist_sca_ee_link_2:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        one_tool_wrist_sca_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        one_tool_wrist_sca_shaft_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        one_tool_wrist_shaft_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        right_camera_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        two_fingertip1:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        two_fingertip2:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        two_needle_link1:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        two_outer_insertion_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        two_outer_pitch_back_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        two_outer_pitch_bottom_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        two_outer_pitch_front_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        two_outer_pitch_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        two_outer_pitch_top_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        two_outer_yaw_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        two_psm_base_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        two_tool_main_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        two_tool_tip_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        two_tool_wrist_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        two_tool_wrist_sca_ee_link_1:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        two_tool_wrist_sca_ee_link_2:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        two_tool_wrist_sca_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        two_tool_wrist_sca_shaft_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        two_tool_wrist_shaft_link:
+        PSM2_tool_wrist_shaft_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -498,7 +251,7 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
       Name: RobotModel
-      Robot Description: /dvrk/PSM2/robot_description
+      Robot Description: dvrk/PSM2/robot_description
       TF Prefix: ""
       Update Interval: 0
       Value: true
@@ -527,22 +280,22 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 3.54455757
+      Distance: 2.92134762
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -0.100855067
-        Y: 1.15384579
-        Z: 1.30270898
+        X: 0
+        Y: 0
+        Z: 0
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.0553982705
+      Pitch: 0.505397916
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 4.82357597
+      Yaw: 4.68858194
     Saved: ~
 Window Geometry:
   Displays:
@@ -560,5 +313,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1200
-  X: 615
-  Y: 196
+  X: 65
+  Y: 60

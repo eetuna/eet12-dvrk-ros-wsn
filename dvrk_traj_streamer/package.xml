@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<package>
+  <name>dvrk_traj_streamer</name>
+  <version>1.0.0</version>
+  <description>
+   The dvrk trajectory streamer package
+  </description>
+
+  <maintainer email="eet12@case.edu">
+    eetuna
+  </maintainer>
+  <license>BSD</license>
+  <author>Eser Erdem Tuna</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>rospy</build_depend>
+  <build_depend>xacro</build_depend>
+  <build_depend>actionlib</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>control_msgs</build_depend>
+  <build_depend>trajectory_msgs</build_depend>
+  <build_depend>cv_bridge</build_depend>
+  <build_depend>dynamic_reconfigure</build_depend>
+
+  <run_depend>rospy</run_depend>
+  <run_depend>xacro</run_depend>
+  <run_depend>actionlib</run_depend>
+  <run_depend>sensor_msgs</run_depend>
+  <run_depend>control_msgs</run_depend>
+  <run_depend>trajectory_msgs</run_depend>
+  <run_depend>cv_bridge</run_depend>
+  <run_depend>dynamic_reconfigure</run_depend>
+
+
+</package>

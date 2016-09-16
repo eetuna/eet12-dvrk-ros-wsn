@@ -112,7 +112,7 @@ import cisstRobotPython
 from cisstRobotPython import robManipulator
 
 
-pathTest = "/home/eetuna/catkin_ws/src/eet12-dvrk-ros-wsn/dvrk_needle_planner/tutorial"
+pathTest = "/home/eet12/catkin_ws/src/eet12-dvrk-ros-wsn/dvrk_needle_planner/tutorial"
 print pathTest
 filePath = pathTest + "/dvpsm.rob"
 print filePath
