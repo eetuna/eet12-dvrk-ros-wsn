@@ -243,6 +243,7 @@ class robot:
         if (self.__robot_state != 'DVRK_READY'):
             rospy.logfatal(rospy.get_caller_id() + ' -> failed to reach state DVRK_READY')
         rospy.loginfo(rospy.get_caller_id() + ' <- homing complete')
+        print('I`m home')
 
     def shutdown(self):
         """Stops providing power to the robot."""

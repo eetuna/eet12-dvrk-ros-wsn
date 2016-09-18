@@ -779,6 +779,6 @@ class TestJointTrajectoryActionServer(object):
                          (self._action_name, result, self._name))
             self._result.error_code = self._result.GOAL_TOLERANCE_VIOLATED
             self._server.set_aborted(self._result)
-        #self._command_stop(end_angles, start_time, dimensions_dict)
-        rospy.sleep(0.2)
-        rospy.signal_shutdown("Finished Action Server")
+        self._command_stop(end_angles, start_time, dimensions_dict)
+        #rospy.sleep(0.2)
+        #rospy.signal_shutdown("Finished Action Server")
