@@ -6,7 +6,7 @@ find_package(Eigen3 REQUIRED)
 
 include_directories(${EIGEN3_INCLUDE_DIR})
 add_definitions(${EIGEN_DEFINITIONS})
-
+add_definitions(-std=c++11)
 
 catkin_simple()
 
@@ -22,7 +22,10 @@ catkin_simple()
 # Executables
 cs_add_executable(traj_interpolator_as src/traj_interpolator_as.cpp)
 cs_add_executable(davinci_traj_interpolator_as src/traj_interpolator_both_as.cpp)
+cs_add_executable(davinci_traj_interpolator_as_both_erdem src/traj_interpolator_as_both_erdem.cpp)
 cs_add_executable(davinci_traj_action_client_pre_pose src/traj_action_client_pre_pose.cpp)
+cs_add_executable(davinci_traj_action_client_pre_pose_both src/traj_action_client_pre_pose_both.cpp)
+
 #cs_add_executable(test_davinci_joint_pub src/davinci_joint_publisher_test_main.cpp)
 #cs_add_executable(davinci_cart_traj_pub src/davinci_cart_traj_pub.cpp)
 #cs_add_executable(davinci_playfile_jointspace src/davinci_playfile_jointspace.cpp)
@@ -33,6 +36,8 @@ cs_add_executable(davinci_traj_action_client_pre_pose src/traj_action_client_pre
 target_link_libraries(traj_interpolator_as ${catkin_LIBRARIES})
 target_link_libraries(davinci_traj_interpolator_as ${catkin_LIBRARIES})
 target_link_libraries(davinci_traj_action_client_pre_pose ${catkin_LIBRARIES})
+target_link_libraries(davinci_traj_interpolator_as_both_erdem ${catkin_LIBRARIES})
+target_link_libraries(davinci_traj_action_client_pre_pose_both ${catkin_LIBRARIES})
 #target_link_libraries(davinci_traj_interpolator_as davinci_joint_publisher ${catkin_LIBRARIES})
 #target_link_libraries(davinci_traj_interpolator_as davinci_joint_publisher davinci_kinematics ${catkin_LIBRARIES})
 # target_link_library(example my_lib)

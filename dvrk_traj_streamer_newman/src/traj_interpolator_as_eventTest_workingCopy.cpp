@@ -69,38 +69,38 @@ private:
     set_position_cartesian_publisher, set_position_goal_cartesian_publisher, set_jaw_position_publisher, set_wrench_body_publisher, set_wrench_spatial_publisher;
 
     ros::Subscriber get_robot_state_subscriber, get_goal_reached_subsriber, get_state_joint_desired_subsriber, get_position_cartesian_desired_suscriber,
-    get_state_joint_current_subscriber, get_position_cartesian_current_subscriber;
+	get_state_joint_current_subscriber, get_position_cartesian_current_subscriber;
 
     void initializePublishers();
     void initializeSubscribers();
     
     
     
-    void robot_state_callback(const std_msgs::String& strc);
+	void robot_state_callback(const std_msgs::String& strc);
     Eigen::VectorXd get_joint_error(Eigen::VectorXd qvec_desired);
 
-    //void goal_reached_callback(const std_msgs::Bool& boolc);
+	//void goal_reached_callback(const std_msgs::Bool& boolc);
 
 
-    //void state_joint_desired_callback(const sensor_msgs::JointState& jointState);
+	//void state_joint_desired_callback(const sensor_msgs::JointState& jointState);
 
 
-    //void position_cartesian_desired_callback(const geometry_msgs::Pose& pose);
+	//void position_cartesian_desired_callback(const geometry_msgs::Pose& pose);
 
 
-    void state_joint_current_callback(const sensor_msgs::JointState& jointState);
+	void state_joint_current_callback(const sensor_msgs::JointState& jointState);
     Eigen::VectorXd get_joint_current();
 
     ofstream myfile;
-    //void position_cartesian_current_callback(const geometry_msgs::Pose& pose);
+	//void position_cartesian_current_callback(const geometry_msgs::Pose& pose);
 
 
-    Eigen::Affine3d position_cartesian_desired, position_cartesian_current;
-    Eigen::VectorXd position_joint_current, effort_joint_desired, position_joint_desired, velocity_joint_current, effort_joint_current;
+	Eigen::Affine3d position_cartesian_desired, position_cartesian_current;
+	Eigen::VectorXd position_joint_current, effort_joint_desired, position_joint_desired, velocity_joint_current, effort_joint_current;
 
-    ///std_msgs::String robot_state;
-    bool goal_reached;
-    bool g_joint_current_got_callback=false;
+	///std_msgs::String robot_state;
+	bool goal_reached;
+	bool g_joint_current_got_callback=false;
     bool g_cartesian_desired_got_callback=false;
     bool g_joint_desired_got_callback=false;
     bool g_cartesian_current_got_callback=false;
@@ -253,8 +253,6 @@ void TrajActionServer::initializePublishers() {
 
         set_robot_state_publisher = nh_.advertise<std_msgs::String>("/dvrk/PSM1/set_robot_state", 1, true);
 
-        
-
         set_position_joint_publisher = nh_.advertise<sensor_msgs::JointState>("/dvrk/PSM1/set_position_joint", 1, true);
 
         //set_position_goal_joint_publisher = nh_.advertise<sensor_msgs::JointState>(full_ros_namespace + "/set_position_goal_joint", 1, true);
@@ -274,8 +272,8 @@ void TrajActionServer::initializePublishers() {
 
 void TrajActionServer::initializeSubscribers() {
     //ros::Publisher  j1_pub_,j2_pub_,j2_1_pub_,j2_2_pub_,j2_3_pub_,j2_4_pub_,j2_5_pub_,j3_pub_,j4_pub_,j5_pub_,j6_pub_,j7_pub_;
-    /*ros::Subscriber get_robot_state_subscriber, get_goal_reached_subsriber, get_state_joint_desired_subsriber, get_position_cartesian_desired_suscriber,
-    get_state_joint_current_subscriber, get_position_cartesian_current_subscriber;*/
+	/*ros::Subscriber get_robot_state_subscriber, get_goal_reached_subsriber, get_state_joint_desired_subsriber, get_position_cartesian_desired_suscriber,
+	get_state_joint_current_subscriber, get_position_cartesian_current_subscriber;*/
 
     /*
     std_msgs::String full_ros_namespace;
@@ -288,16 +286,16 @@ void TrajActionServer::initializeSubscribers() {
 
     //full_ros_namespace = ros_namespace + robot_name;
 
-    get_robot_state_subscriber = nh_.subscribe("/dvrk/PSM1/robot_state", 1000, &TrajActionServer::robot_state_callback, this); 
+	get_robot_state_subscriber = nh_.subscribe("/dvrk/PSM1/robot_state", 1000, &TrajActionServer::robot_state_callback, this); 
 
-    //get_robot_state_subscriber = nh_.subscribe(full_ros_namespace + "/goal_reached", 10, goal_reached_callback);
+	//get_robot_state_subscriber = nh_.subscribe(full_ros_namespace + "/goal_reached", 10, goal_reached_callback);
 
-    //get_robot_state_subscriber = nh_.subscribe(full_ros_namespace + "/state_joint_desired", 10, state_joint_desired_callback);
+	//get_robot_state_subscriber = nh_.subscribe(full_ros_namespace + "/state_joint_desired", 10, state_joint_desired_callback);
 
-    //get_robot_state_subscriber = nh_.subscribe(full_ros_namespace + "/position_cartesian_desired", 10, position_cartesian_desired_callback);
-    get_state_joint_current_subscriber = nh_.subscribe("/dvrk/PSM1/state_joint_current", 1000, &TrajActionServer::state_joint_current_callback, this);
+	//get_robot_state_subscriber = nh_.subscribe(full_ros_namespace + "/position_cartesian_desired", 10, position_cartesian_desired_callback);
+	get_state_joint_current_subscriber = nh_.subscribe("/dvrk/PSM1/state_joint_current", 1000, &TrajActionServer::state_joint_current_callback, this);
 
-    //get_robot_state_subscriber = nh_.subscribe(full_ros_namespace + "/position_cartesian_current", 100, position_cartesian_current_callback);
+	//get_robot_state_subscriber = nh_.subscribe(full_ros_namespace + "/position_cartesian_current", 100, position_cartesian_current_callback);
 
 
 
@@ -345,8 +343,8 @@ void TrajActionServer::state_joint_desired_callback(const sensor_msgs::JointStat
 void TrajActionServer::position_cartesian_desired_callback(const geometry_msgs::Pose& pose)
 {
   //ROS_INFO(getCallerID() + " -> current state is %s", data.data);
-    tf::poseMsgToEigen(pose, position_cartesian_desired);
-    //g_cartesian_desired_got_callback=true;
+	tf::poseMsgToEigen(pose, position_cartesian_desired);
+	//g_cartesian_desired_got_callback=true;
 
 }
 
@@ -355,8 +353,8 @@ void TrajActionServer::position_cartesian_desired_callback(const geometry_msgs::
 void TrajActionServer::position_cartesian_current_callback(const geometry_msgs::Pose& pose)
 {
   //ROS_INFO(getCallerID() + " -> current state is %s", data.data);
-    tf::poseMsgToEigen(pose, position_cartesian_current);
-    //g_position_current_got_callback=true;
+	tf::poseMsgToEigen(pose, position_cartesian_current);
+	//g_position_current_got_callback=true;
 
 
 }
@@ -542,7 +540,7 @@ void TrajActionServer::command_joints(Eigen::VectorXd q_cmd) {
     jointState1.position[5] = q_cmd[5];
     jointState1.position[6] = q_cmd[6];*/
     cout << "jointState" << jointState1 << endl; 
-    set_position_joint_publisher.publish(jointState1);
+	set_position_joint_publisher.publish(jointState1);
 }
 
 void TrajActionServer::executeCB(const actionlib::SimpleActionServer<davinci_traj_streamer::trajAction>::GoalConstPtr& goal) {

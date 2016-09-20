@@ -63,44 +63,45 @@ private:
     //string robot_state, robot_state_pre;
     string robot_state = "DVRK_UNINITIALIZED";
     string robot_state_pre = robot_state;
+
     //ros::Publisher  j1_pub_,j2_pub_,j2_1_pub_,j2_2_pub_,j2_3_pub_,j2_4_pub_,j2_5_pub_,j3_pub_,j4_pub_,j5_pub_,j6_pub_,j7_pub_;
 
     ros::Publisher set_robot_state_publisher,set_position_joint_publisher,set_position_goal_joint_publisher,
     set_position_cartesian_publisher, set_position_goal_cartesian_publisher, set_jaw_position_publisher, set_wrench_body_publisher, set_wrench_spatial_publisher;
 
     ros::Subscriber get_robot_state_subscriber, get_goal_reached_subsriber, get_state_joint_desired_subsriber, get_position_cartesian_desired_suscriber,
-    get_state_joint_current_subscriber, get_position_cartesian_current_subscriber;
+	get_state_joint_current_subscriber, get_position_cartesian_current_subscriber;
 
     void initializePublishers();
     void initializeSubscribers();
     
     
     
-    void robot_state_callback(const std_msgs::String& strc);
+	void robot_state_callback(const std_msgs::String::ConstPtr& strc);
     Eigen::VectorXd get_joint_error(Eigen::VectorXd qvec_desired);
 
-    //void goal_reached_callback(const std_msgs::Bool& boolc);
+	//void goal_reached_callback(const std_msgs::Bool& boolc);
 
 
-    //void state_joint_desired_callback(const sensor_msgs::JointState& jointState);
+	//void state_joint_desired_callback(const sensor_msgs::JointState& jointState);
 
 
-    //void position_cartesian_desired_callback(const geometry_msgs::Pose& pose);
+	//void position_cartesian_desired_callback(const geometry_msgs::Pose& pose);
 
 
-    void state_joint_current_callback(const sensor_msgs::JointState& jointState);
+	void state_joint_current_callback(const sensor_msgs::JointState& jointState);
     Eigen::VectorXd get_joint_current();
 
     ofstream myfile;
-    //void position_cartesian_current_callback(const geometry_msgs::Pose& pose);
+	//void position_cartesian_current_callback(const geometry_msgs::Pose& pose);
 
 
-    Eigen::Affine3d position_cartesian_desired, position_cartesian_current;
-    Eigen::VectorXd position_joint_current, effort_joint_desired, position_joint_desired, velocity_joint_current, effort_joint_current;
+	Eigen::Affine3d position_cartesian_desired, position_cartesian_current;
+	Eigen::VectorXd position_joint_current, effort_joint_desired, position_joint_desired, velocity_joint_current, effort_joint_current;
 
-    ///std_msgs::String robot_state;
-    bool goal_reached;
-    bool g_joint_current_got_callback=false;
+	///std_msgs::String robot_state;
+	bool goal_reached;
+	bool g_joint_current_got_callback=false;
     bool g_cartesian_desired_got_callback=false;
     bool g_joint_desired_got_callback=false;
     bool g_cartesian_current_got_callback=false;
@@ -147,6 +148,15 @@ as_(nh, "trajActionServer", boost::bind(&TrajActionServer::executeCB, this, _1),
     cout << "in constructor" << endl;
     cout << "robot_state: " << robot_state << endl;
     cout << "robot_state_pre: " << robot_state_pre << endl;
+     bool value;
+     value = false;
+     if (robot_state == "DVRK_UNINITIALIZED")
+        value = true;
+    else
+        value = false;
+
+     cout << "value: " << value << endl;
+
     // do any other desired initializations here...specific to your implementation
     //initializations:
     /*should not need this: use davinci_joint_publisher object
@@ -253,8 +263,6 @@ void TrajActionServer::initializePublishers() {
 
         set_robot_state_publisher = nh_.advertise<std_msgs::String>("/dvrk/PSM1/set_robot_state", 1, true);
 
-        
-
         set_position_joint_publisher = nh_.advertise<sensor_msgs::JointState>("/dvrk/PSM1/set_position_joint", 1, true);
 
         //set_position_goal_joint_publisher = nh_.advertise<sensor_msgs::JointState>(full_ros_namespace + "/set_position_goal_joint", 1, true);
@@ -274,8 +282,8 @@ void TrajActionServer::initializePublishers() {
 
 void TrajActionServer::initializeSubscribers() {
     //ros::Publisher  j1_pub_,j2_pub_,j2_1_pub_,j2_2_pub_,j2_3_pub_,j2_4_pub_,j2_5_pub_,j3_pub_,j4_pub_,j5_pub_,j6_pub_,j7_pub_;
-    /*ros::Subscriber get_robot_state_subscriber, get_goal_reached_subsriber, get_state_joint_desired_subsriber, get_position_cartesian_desired_suscriber,
-    get_state_joint_current_subscriber, get_position_cartesian_current_subscriber;*/
+	/*ros::Subscriber get_robot_state_subscriber, get_goal_reached_subsriber, get_state_joint_desired_subsriber, get_position_cartesian_desired_suscriber,
+	get_state_joint_current_subscriber, get_position_cartesian_current_subscriber;*/
 
     /*
     std_msgs::String full_ros_namespace;
@@ -288,16 +296,16 @@ void TrajActionServer::initializeSubscribers() {
 
     //full_ros_namespace = ros_namespace + robot_name;
 
-    get_robot_state_subscriber = nh_.subscribe("/dvrk/PSM1/robot_state", 1000, &TrajActionServer::robot_state_callback, this); 
+	get_robot_state_subscriber = nh_.subscribe("/dvrk/PSM1/robot_state", 1, &TrajActionServer::robot_state_callback, this); 
 
-    //get_robot_state_subscriber = nh_.subscribe(full_ros_namespace + "/goal_reached", 10, goal_reached_callback);
+	//get_robot_state_subscriber = nh_.subscribe(full_ros_namespace + "/goal_reached", 10, goal_reached_callback);
 
-    //get_robot_state_subscriber = nh_.subscribe(full_ros_namespace + "/state_joint_desired", 10, state_joint_desired_callback);
+	//get_robot_state_subscriber = nh_.subscribe(full_ros_namespace + "/state_joint_desired", 10, state_joint_desired_callback);
 
-    //get_robot_state_subscriber = nh_.subscribe(full_ros_namespace + "/position_cartesian_desired", 10, position_cartesian_desired_callback);
-    get_state_joint_current_subscriber = nh_.subscribe("/dvrk/PSM1/state_joint_current", 1000, &TrajActionServer::state_joint_current_callback, this);
+	//get_robot_state_subscriber = nh_.subscribe(full_ros_namespace + "/position_cartesian_desired", 10, position_cartesian_desired_callback);
+	get_state_joint_current_subscriber = nh_.subscribe("/dvrk/PSM1/state_joint_current", 1, &TrajActionServer::state_joint_current_callback, this);
 
-    //get_robot_state_subscriber = nh_.subscribe(full_ros_namespace + "/position_cartesian_current", 100, position_cartesian_current_callback);
+	//get_robot_state_subscriber = nh_.subscribe(full_ros_namespace + "/position_cartesian_current", 100, position_cartesian_current_callback);
 
 
 
@@ -345,8 +353,8 @@ void TrajActionServer::state_joint_desired_callback(const sensor_msgs::JointStat
 void TrajActionServer::position_cartesian_desired_callback(const geometry_msgs::Pose& pose)
 {
   //ROS_INFO(getCallerID() + " -> current state is %s", data.data);
-    tf::poseMsgToEigen(pose, position_cartesian_desired);
-    //g_cartesian_desired_got_callback=true;
+	tf::poseMsgToEigen(pose, position_cartesian_desired);
+	//g_cartesian_desired_got_callback=true;
 
 }
 
@@ -355,8 +363,8 @@ void TrajActionServer::position_cartesian_desired_callback(const geometry_msgs::
 void TrajActionServer::position_cartesian_current_callback(const geometry_msgs::Pose& pose)
 {
   //ROS_INFO(getCallerID() + " -> current state is %s", data.data);
-    tf::poseMsgToEigen(pose, position_cartesian_current);
-    //g_position_current_got_callback=true;
+	tf::poseMsgToEigen(pose, position_cartesian_current);
+	//g_position_current_got_callback=true;
 
 
 }
@@ -378,15 +386,14 @@ void TrajActionServer::home()
         """This method will provide power to the robot as will as home
         the robot. This method requries the robot name."""*/
         //rospy.loginfo(rospy.get_caller_id() + ' -> start homing')
-
-        //unique_lock<mutex> mlock(m_mutex);
+        unique_lock<mutex> mlock(m_mutex);
         std_msgs::String state1;
         state1.data = "Home";
         dvrk_set_state(state1);
         cout << "robot_state: " << get_robot_state() << endl;
         //ros::Duration(0.1).sleep();
         cout << "dvrk set state home done" << endl;
-/*
+
         int counter = 10; // up to 10 transitions to get ready
         cout << "in home function" << endl;
         cout << "robot_state: " << get_robot_state() << endl;
@@ -394,8 +401,8 @@ void TrajActionServer::home()
         while (counter > 0){
             cout << "in while counter" << endl;
             cout << "robot_state: " << get_robot_state() << endl;
-            m_condVar.wait_for(mlock, chrono::milliseconds(1), bind(&TrajActionServer::isDataLoaded, this));
-            if (robot_state.compare("DVRK_READY") != 0){
+            m_condVar.wait_for(mlock, chrono::milliseconds(5000), bind(&TrajActionServer::isDataLoaded, this));
+            if (robot_state != "DVRK_READY"){
                 cout << "robot_state: " << get_robot_state() << endl;
                 counter = counter - 1;
                 ROS_INFO("waiting for state to be DVRK_READY");
@@ -406,12 +413,12 @@ void TrajActionServer::home()
                 counter = -1;
             }
         }
-        if (robot_state.compare("DVRK_READY") != 0)
+        if (robot_state != "DVRK_READY")
         {
             ROS_INFO("failed to reach state DVRK_READY");
             //rospy.logfatal(rospy.get_caller_id() + ' -> failed to reach state DVRK_READY')
         }
-        */
+        
         ROS_INFO("homing complete");
         cout << "robot_state: " << get_robot_state() << endl;
         //rospy.loginfo(rospy.get_caller_id() + ' <- homing complete')
@@ -425,18 +432,16 @@ void TrajActionServer::check_robot_state()
     cout << "robot_state_pre: " << robot_state_pre << endl;
     //this_thread::sleep_for(chrono::milliseconds(10));
     lock_guard<mutex> guard(m_mutex);
-    if(robot_state.compare(robot_state_pre) != 0)
+    //if(robot_state != robot_state_pre )
+    while(robot_state == robot_state_pre )
     {
-            cout << "in check_robot_state function check change" << endl;
-            cout << "robot_state: " << robot_state << endl;
-            cout << "robot_state_pre: " << robot_state_pre << endl;
-            m_bNewState = true;
+        m_bNewState = false;
+
     }
-    else
-    {
-            m_bNewState = false;
-    }
-    
+    cout << "in check_robot_state function check change" << endl;
+    cout << "robot_state: " << robot_state << endl;
+    cout << "robot_state_pre: " << robot_state_pre << endl;
+    m_bNewState = true;
 
 
     m_condVar.notify_one();
@@ -450,18 +455,32 @@ bool TrajActionServer::isDataLoaded()
 
 string TrajActionServer::get_robot_state()
 {
-    //nh_.subscribe("/dvrk/PSM1/robot_state", 1, &TrajActionServer::robot_state_callback, this);
+   // nh_.subscribe("/dvrk/PSM1/robot_state", 1, &TrajActionServer::robot_state_callback, this);
     cout << "robot_state: " << robot_state << endl;
     //ROS_INFO("-> current state is %s", robot_state);
     return robot_state;
 
 }
 
-void TrajActionServer::robot_state_callback(const std_msgs::String& strc)
+void TrajActionServer::robot_state_callback(const std_msgs::String::ConstPtr& strc)
 {
+    cout << "now in robot callback" << endl;
+
+    cout << robot_state << endl;
+    ROS_INFO("I heard1: [%s]", strc->data.c_str());
+    /*
+     cout << "I heard: " << strc->data.c_str() << endl;
+     cout << "in subscriber callback" << endl;
+  cout << "robot_state: " << robot_state << endl;
+  cout << "robot_state_pre: " << robot_state_pre << endl;*/
   robot_state_pre = robot_state;
-  ROS_INFO("-> current state is %s", strc.data.c_str());
-  robot_state = strc.data.c_str();
+  ROS_INFO("-> current state is %s", strc->data.c_str());
+  robot_state = strc->data.c_str();
+  cout << "robot_state: " << robot_state << endl;
+  cout << "in subscriber callback" << endl;
+  /*
+  cout << "robot_state: " << robot_state << endl;
+  cout << "robot_state_pre: " << robot_state_pre << endl;*/
 }
 
 void TrajActionServer::state_joint_current_callback(const sensor_msgs::JointState& jointState)
@@ -542,7 +561,7 @@ void TrajActionServer::command_joints(Eigen::VectorXd q_cmd) {
     jointState1.position[5] = q_cmd[5];
     jointState1.position[6] = q_cmd[6];*/
     cout << "jointState" << jointState1 << endl; 
-    set_position_joint_publisher.publish(jointState1);
+	set_position_joint_publisher.publish(jointState1);
 }
 
 void TrajActionServer::executeCB(const actionlib::SimpleActionServer<davinci_traj_streamer::trajAction>::GoalConstPtr& goal) {
@@ -730,23 +749,19 @@ int main(int argc, char** argv) {
     
     //thread_1.join();
     //thread_2.join();
-    ros::Duration(3).sleep();
     as.get_robot_state();
     cout << "start homing" << endl;
-    as.home();
-    /*
     thread thread_1(&TrajActionServer::home, &as);
     thread thread_2(&TrajActionServer::check_robot_state, &as);
     
     thread_2.join();
     thread_1.join();
-    */
+
     //as.home();
     ROS_INFO("ready to receive/execute trajectories");
     //ros::Time end = ros::Time::now();
     //cout << "time difference " << end-begin << endl;
     //main loop:
-    as.get_robot_state();
     //ros::spin();
     while (ros::ok()) {
         ros::spinOnce();

@@ -34,12 +34,12 @@ int main(int argc, char** argv) {
 
     Eigen::VectorXd q_in_vecxd;
     Eigen::VectorXd qvec_1,qvec_2,qvec_3;
-    qvec_1.resize(7);
-    qvec_2.resize(7);
-    qvec_3.resize(7);
-    qvec_1<< 0,0,0,0,0,0,0;
-    qvec_2<< 0,0,0.01,0,0,0,0;
-    qvec_3<< 0.1,0.2,0.02,0,0,0,0;
+    qvec_1.resize(14);
+    qvec_2.resize(14);
+    qvec_3.resize(14);
+    qvec_1<< 0,0,0,0,0,0,0, 0,0,0,0,0,0,0;
+    qvec_2<< 0,0,0.01,0,0,0,0, 0.1,0.2,0,0,0,0,0;
+    qvec_3<< 0.1,0.2,0.02,0,0,0,0, 0.1,0.2,0.03,0,0,0,0;
     //qvec_2<< -0.5, 0.4,  0.1,    0.5,    -0.7,   0.8,  0,      -0.5, 0.4,  0.1,    0.5,    -0.7,   0.8,  0;       
     
     //qvec_2<< -0.5, 0.4,  0.1,    0.5,    -0.7,   0.8,  0,      -0.5, 0.4,  0.1,    0.5,    -0.7,   0.8,  0;       
@@ -64,7 +64,7 @@ int main(int argc, char** argv) {
        trajectory_point1.time_from_start =    ros::Duration(0.0);
        trajectory_point2.time_from_start =    ros::Duration(8.0);
        trajectory_point3.time_from_start =    ros::Duration(16.0);       
-    for (int i=0;i<7;i++) { //pre-sizes positions vector, so can access w/ indices later
+    for (int i=0;i<14;i++) { //pre-sizes positions vector, so can access w/ indices later
         trajectory_point1.positions.push_back(qvec_1(i));
         trajectory_point2.positions.push_back(qvec_2(i));
         trajectory_point3.positions.push_back(qvec_3(i));        
